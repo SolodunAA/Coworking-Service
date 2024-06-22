@@ -199,10 +199,11 @@ public class InMemoryBookingDaoTest {
 
         bookingDao.addNewBooking(userLogin, date, time, period, placeId);
 
-        var resultMessage = bookingDao.deleteBooking(new Booking(userLogin, placeId, date, time, period));
+        var resultMessage = bookingDao.deleteBooking(booking);
         var expectedMessage = "Deleted successfully";
         assertThat(resultMessage).isEqualTo(expectedMessage);
         assertThat(bookingDao.showAllBookingsForUser(userLogin).isEmpty()).isTrue();
+
 
         var resultEmptySlots = bookingDao.getAvailableSlotsOnDateAndAtTimes(date, time, period);
         var expectedEmptySlots = Map.of(1, Set.of(12, 13, 14));

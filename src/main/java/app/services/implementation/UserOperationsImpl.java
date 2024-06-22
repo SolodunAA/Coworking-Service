@@ -28,25 +28,15 @@ public class UserOperationsImpl implements UserOperations {
     public void bookDesk(String login) {
         ConsolePrinter.print("What day would you like to book your desk for? Date format YYYY-MM-DD");
         String userAnswerDate = reader.read();
-        ConsolePrinter.print("The following desks are available on this date");
-        Map<Integer, Set<Integer>> availableDesksAndHallsOnDate = bookingDao.getAvailableSlotsOnDate(LocalDate.parse(userAnswerDate));
-        Map<Integer, String> deskIdToRoomName = placeDao.getMapOfAllDesks();
-        ConsolePrinter.print("select from below slots");
-        availableDesksAndHallsOnDate.forEach((deskId, slots) -> {
-            String roomName = deskIdToRoomName.get(deskId);
-            if (roomName != null) {
-                ConsolePrinter.print("room: " + roomName + " desk: " + deskId + " slots:" +
-                        slots.stream().sorted().collect(Collectors.toList()));
-            }
-        });
-        ConsolePrinter.print("Enter start period of your booking. Example format for 1 pm: 13");
+        ConsolePrinter.print("Enter start period of your booking. Example format for 13:00 is 13");
         String userAnswerTime = reader.read();
-        ConsolePrinter.print("Enter period of your booking. Minimum period is 1 hour. Example format for 2 hour: 2");
+        ConsolePrinter.print("Enter period of your booking. Minimum period is 1 hour. Example format for 2 hour is 2");
         String userAnswerPeriod = reader.read();
+        Map<Integer, String> deskIdToRoomName = placeDao.getMapOfAllDesks();
         Map<Integer, Set<Integer>> availableDeskOnTime = bookingDao.getAvailableSlotsOnDateAndAtTimes(LocalDate.parse(userAnswerDate),
                 Integer.parseInt(userAnswerTime),
                 Integer.parseInt(userAnswerPeriod));
-        ConsolePrinter.print("select from below slots");
+        ConsolePrinter.print("Select from below slots");
         availableDeskOnTime.forEach((deskId, slots) -> {
             String roomName = deskIdToRoomName.get(deskId);
             if (roomName != null) {
@@ -69,26 +59,17 @@ public class UserOperationsImpl implements UserOperations {
 
     @Override
     public void bookHall(String login) {
-        ConsolePrinter.print("What day would you like to book your hall for? Date format YYYY-MM-DD");
+        ConsolePrinter.print("What day would you like to book your hall for? Date format is YYYY-MM-DD");
         String userAnswerDate = reader.read();
-        ConsolePrinter.print("The following hall are available on this date");
-        Map<Integer, Set<Integer>> availableSlotsOnDate = bookingDao.getAvailableSlotsOnDate(LocalDate.parse(userAnswerDate));
-        Map<Integer, String> hallIdToName = placeDao.getMapOfAllHalls();
-        ConsolePrinter.print("select from below slots");
-        availableSlotsOnDate.forEach((roomId, slots) -> {
-            String hallName = hallIdToName.get(roomId);
-            if (hallName != null) {
-                ConsolePrinter.print(hallName + " : " + slots.stream().sorted().collect(Collectors.toList()));
-            }
-        });
-        ConsolePrinter.print("Enter start period of your booking. Example format for 1 pm: 13");
+        ConsolePrinter.print("Enter start period of your booking. Example format for 13:00 is 13");
         String userAnswerTime = reader.read();
-        ConsolePrinter.print("Enter period of your booking. Minimum period is 1 hour. Example format for 2 hour: 2");
+        ConsolePrinter.print("Enter period of your booking. Minimum period is 1 hour. Example format for 2 hour is 2");
         String userAnswerPeriod = reader.read();
+        Map<Integer, String> hallIdToName = placeDao.getMapOfAllHalls();
         Map<Integer, Set<Integer>> availableDeskOnTime = bookingDao.getAvailableSlotsOnDateAndAtTimes(LocalDate.parse(userAnswerDate),
                 Integer.parseInt(userAnswerTime),
                 Integer.parseInt(userAnswerPeriod));
-        ConsolePrinter.print("select from below slots");
+        ConsolePrinter.print("Select from below slots");
         availableDeskOnTime.forEach((roomId, slots) -> {
             String hallName = hallIdToName.get(roomId);
             if (hallName != null) {
