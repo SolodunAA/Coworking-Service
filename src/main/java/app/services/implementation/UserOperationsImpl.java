@@ -17,21 +17,33 @@ public class UserOperationsImpl implements UserOperations {
     private final PlaceDao placeDao;
     private final BookingDao bookingDao;
     private final Reader reader;
+    private final int openTime;
+    private final int closeTime;
 
-    public UserOperationsImpl(PlaceDao placeDao, BookingDao bookingDao, Reader reader) {
+    public UserOperationsImpl(PlaceDao placeDao, BookingDao bookingDao, Reader reader, int openTime, int closeTime) {
         this.placeDao = placeDao;
         this.bookingDao = bookingDao;
         this.reader = reader;
+        this.openTime = openTime;
+        this.closeTime = closeTime;
     }
 
     @Override
     public void bookDesk(String login) {
         ConsolePrinter.print("What day would you like to book your desk for? Date format YYYY-MM-DD");
         String userAnswerDate = reader.read();
-        ConsolePrinter.print("Enter start period of your booking. Example format for 13:00 is 13");
+        ConsolePrinter.print("Enter start period of your booking. Example format for 13:00 is 13. Working hours 8:00 - 22:00");
         String userAnswerTime = reader.read();
+        if(Integer.parseInt(userAnswerTime) < openTime && Integer.parseInt(userAnswerTime) >= closeTime){
+            ConsolePrinter.print("The time should be between working hours");
+            return;
+        }
         ConsolePrinter.print("Enter period of your booking. Minimum period is 1 hour. Example format for 2 hour is 2");
         String userAnswerPeriod = reader.read();
+        if(Integer.parseInt(userAnswerPeriod) + Integer.parseInt(userAnswerTime) >= closeTime){
+            ConsolePrinter.print("The time should be between working hours");
+            return;
+        }
         Map<Integer, String> deskIdToRoomName = placeDao.getMapOfAllDesks();
         Map<Integer, Set<Integer>> availableDeskOnTime = bookingDao.getAvailableSlotsOnDateAndAtTimes(LocalDate.parse(userAnswerDate),
                 Integer.parseInt(userAnswerTime),
@@ -40,7 +52,7 @@ public class UserOperationsImpl implements UserOperations {
         availableDeskOnTime.forEach((deskId, slots) -> {
             String roomName = deskIdToRoomName.get(deskId);
             if (roomName != null) {
-                ConsolePrinter.print("room: " + roomName + " desk: " + deskId + " slots:" +
+                ConsolePrinter.print("Room: " + roomName + " deskId: " + deskId + " - available slots:" +
                         slots.stream().sorted().collect(Collectors.toList()));
             }
         });
@@ -61,10 +73,18 @@ public class UserOperationsImpl implements UserOperations {
     public void bookHall(String login) {
         ConsolePrinter.print("What day would you like to book your hall for? Date format is YYYY-MM-DD");
         String userAnswerDate = reader.read();
-        ConsolePrinter.print("Enter start period of your booking. Example format for 13:00 is 13");
+        ConsolePrinter.print("Enter start period of your booking. Example format for 13:00 is 13. Working hours 8:00 - 22:00");
         String userAnswerTime = reader.read();
+        if(Integer.parseInt(userAnswerTime) < openTime && Integer.parseInt(userAnswerTime) >= closeTime){
+            ConsolePrinter.print("The time should be between working hours");
+            return;
+        }
         ConsolePrinter.print("Enter period of your booking. Minimum period is 1 hour. Example format for 2 hour is 2");
         String userAnswerPeriod = reader.read();
+        if(Integer.parseInt(userAnswerPeriod) + Integer.parseInt(userAnswerTime) >= closeTime){
+            ConsolePrinter.print("The time should be between working hours");
+            return;
+        }
         Map<Integer, String> hallIdToName = placeDao.getMapOfAllHalls();
         Map<Integer, Set<Integer>> availableDeskOnTime = bookingDao.getAvailableSlotsOnDateAndAtTimes(LocalDate.parse(userAnswerDate),
                 Integer.parseInt(userAnswerTime),
@@ -73,7 +93,7 @@ public class UserOperationsImpl implements UserOperations {
         availableDeskOnTime.forEach((roomId, slots) -> {
             String hallName = hallIdToName.get(roomId);
             if (hallName != null) {
-                ConsolePrinter.print("hall name: " + hallName + " hall id: " + roomId + " available slots: " + slots.stream().sorted().collect(Collectors.toList()));
+                ConsolePrinter.print(hallName + " hall (id: " + roomId + ") - available slots: " + slots.stream().sorted().collect(Collectors.toList()));
             }
         });
         ConsolePrinter.print("Select placeId");
@@ -123,20 +143,22 @@ public class UserOperationsImpl implements UserOperations {
         ConsolePrinter.print("The following desks are available on this date");
         Map<Integer, Set<Integer>> availableDesksAndHallsOnDate = bookingDao.getAvailableSlotsOnDate(LocalDate.parse(userAnswerDate));
         Map<Integer, String> deskIdToRoomName = placeDao.getMapOfAllDesks();
+        ConsolePrinter.print("ROOMS: ");
         availableDesksAndHallsOnDate.forEach((deskId, slots) -> {
             String roomName = deskIdToRoomName.get(deskId);
             if (roomName != null) {
-                ConsolePrinter.print("room: " + roomName + " desk: " + deskId + " slots:" +
+                ConsolePrinter.print("Room: " + roomName + " deskId: " + deskId + " - available slots:" +
                         slots.stream().sorted().collect(Collectors.toList()));
             }
         });
         ConsolePrinter.print("The following hall are available on this date");
         Map<Integer, Set<Integer>> availableSlotsOnDate = bookingDao.getAvailableSlotsOnDate(LocalDate.parse(userAnswerDate));
         Map<Integer, String> hallIdToName = placeDao.getMapOfAllHalls();
+        ConsolePrinter.print("HALLS: ");
         availableSlotsOnDate.forEach((roomId, slots) -> {
             String hallName = hallIdToName.get(roomId);
             if (hallName != null) {
-                ConsolePrinter.print(hallName + " : " + slots.stream().sorted().collect(Collectors.toList()));
+                ConsolePrinter.print(hallName + " hall (id: " + roomId + ") - available slots: " + slots.stream().sorted().collect(Collectors.toList()));
             }
         });
     }
@@ -147,23 +169,33 @@ public class UserOperationsImpl implements UserOperations {
         Map<Integer, String> deskIdToRoomName = placeDao.getMapOfAllDesks();
         ConsolePrinter.print("What day would you like to see available places? Date format YYYY-MM-DD");
         String userAnswerDate = reader.read();
-        ConsolePrinter.print("Enter start time of your watching. Example format for 1 pm: 13");
+        ConsolePrinter.print("Enter start period of your watching. Example format for 13:00 is 13. Working hours 8:00 - 22:00");
         String userAnswerTime = reader.read();
-        ConsolePrinter.print("Enter period of your watching. Minimum period is 1 hour. Example format for 2 hour: 2");
+        if(Integer.parseInt(userAnswerTime) < openTime && Integer.parseInt(userAnswerTime) >= closeTime){
+            ConsolePrinter.print("The time should be between working hours");
+            return;
+        }
+        ConsolePrinter.print("Enter period of your booking. Minimum period is 1 hour. Example format for 2 hour is 2");
         String userAnswerPeriod = reader.read();
+        if(Integer.parseInt(userAnswerPeriod) + Integer.parseInt(userAnswerTime) >= closeTime){
+            ConsolePrinter.print("The time should be between working hours");
+            return;
+        }
         Map<Integer, Set<Integer>> availableDeskOnTime = bookingDao.getAvailableSlotsOnDateAndAtTimes(LocalDate.parse(userAnswerDate),
                 Integer.parseInt(userAnswerTime),
                 Integer.parseInt(userAnswerPeriod));
+        ConsolePrinter.print("HALLS: ");
         availableDeskOnTime.forEach((roomId, slots) -> {
             String hallName = hallIdToName.get(roomId);
             if (hallName != null) {
-                ConsolePrinter.print("hall name: " + hallName + " hall id: " + roomId + " available slots: " + slots.stream().sorted().collect(Collectors.toList()));
+                ConsolePrinter.print(hallName + " hall (id: " + roomId + ") - available slots: " + slots.stream().sorted().collect(Collectors.toList()));
             }
         });
+        ConsolePrinter.print("ROOMS: ");
         availableDeskOnTime.forEach((deskId, slots) -> {
             String roomName = deskIdToRoomName.get(deskId);
             if (roomName != null) {
-                ConsolePrinter.print("room: " + roomName + " desk: " + deskId + " slots:" +
+                ConsolePrinter.print("Room: " + roomName + " deskId: " + deskId + " - available slots:" +
                         slots.stream().sorted().collect(Collectors.toList()));
             }
         });

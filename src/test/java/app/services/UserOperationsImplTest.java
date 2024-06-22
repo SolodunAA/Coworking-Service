@@ -23,7 +23,7 @@ public class UserOperationsImplTest {
         int closeTime = 22;
         PlaceDao placeDao = new InMemoryPlaceDao();
         BookingDao bookingDao = new InMemoryBookingDao(placeDao, openTime, closeTime);
-        UserOperations userOperations = new UserOperationsImpl(placeDao, bookingDao, crMock);
+        UserOperations userOperations = new UserOperationsImpl(placeDao, bookingDao, crMock, openTime, closeTime);
         String roomName = "Red";
         String date = "2024-06-23";
         String time = "10";
@@ -44,7 +44,7 @@ public class UserOperationsImplTest {
         int closeTime = 22;
         PlaceDao placeDao = new InMemoryPlaceDao();
         BookingDao bookingDao = new InMemoryBookingDao(placeDao, openTime, closeTime);
-        UserOperations userOperations = new UserOperationsImpl(placeDao, bookingDao, crMock);
+        UserOperations userOperations = new UserOperationsImpl(placeDao, bookingDao, crMock, openTime, closeTime);
         String hallName = "GrandHall";
         String hallName1 = "SmallHall";
         String date = "2024-06-23";
@@ -64,7 +64,7 @@ public class UserOperationsImplTest {
         int closeTime = 22;
         PlaceDao placeDao = new InMemoryPlaceDao();
         BookingDao bookingDao = new InMemoryBookingDao(placeDao, openTime, closeTime);
-        UserOperations userOperations = new UserOperationsImpl(placeDao, bookingDao, crMock);
+        UserOperations userOperations = new UserOperationsImpl(placeDao, bookingDao, crMock, openTime, closeTime);
         String roomName = "Red";
         String date = "2024-06-23";
         String time = "10";
@@ -86,7 +86,7 @@ public class UserOperationsImplTest {
         int closeTime = 22;
         PlaceDao placeDao = new InMemoryPlaceDao();
         BookingDao bookingDao = new InMemoryBookingDao(placeDao, openTime, closeTime);
-        UserOperations userOperations = new UserOperationsImpl(placeDao, bookingDao, crMock);
+        UserOperations userOperations = new UserOperationsImpl(placeDao, bookingDao, crMock, openTime, closeTime);
         String roomName = "Red";
         String date = "2024-06-23";
         String time = "10";
@@ -114,7 +114,7 @@ public class UserOperationsImplTest {
         int closeTime = 22;
         PlaceDao placeDao = new InMemoryPlaceDao();
         BookingDao bookingDao = new InMemoryBookingDao(placeDao, openTime, closeTime);
-        UserOperations userOperations = new UserOperationsImpl(placeDao, bookingDao, crMock);
+        UserOperations userOperations = new UserOperationsImpl(placeDao, bookingDao, crMock, openTime, closeTime);
         String roomName = "Red";
         String date = "2024-06-23";
         String time = "10";
@@ -135,7 +135,7 @@ public class UserOperationsImplTest {
         int closeTime = 22;
         PlaceDao placeDao = new InMemoryPlaceDao();
         BookingDao bookingDao = new InMemoryBookingDao(placeDao, openTime, closeTime);
-        UserOperations userOperations = new UserOperationsImpl(placeDao, bookingDao, crMock);
+        UserOperations userOperations = new UserOperationsImpl(placeDao, bookingDao, crMock, openTime, closeTime);
         String roomName = "Red";
         String hallName = "GrandHall";
         placeDao.addNewRoom(roomName);
@@ -150,7 +150,7 @@ public class UserOperationsImplTest {
         int closeTime = 22;
         PlaceDao placeDao = new InMemoryPlaceDao();
         BookingDao bookingDao = new InMemoryBookingDao(placeDao, openTime, closeTime);
-        UserOperations userOperations = new UserOperationsImpl(placeDao, bookingDao, crMock);
+        UserOperations userOperations = new UserOperationsImpl(placeDao, bookingDao, crMock, openTime, closeTime);
         String roomName = "Red";
         String hallName = "GrandHall";
         String date = "2024-06-21";
@@ -167,7 +167,7 @@ public class UserOperationsImplTest {
         int closeTime = 22;
         PlaceDao placeDao = new InMemoryPlaceDao();
         BookingDao bookingDao = new InMemoryBookingDao(placeDao, openTime, closeTime);
-        UserOperations userOperations = new UserOperationsImpl(placeDao, bookingDao, crMock);
+        UserOperations userOperations = new UserOperationsImpl(placeDao, bookingDao, crMock, openTime, closeTime);
         String roomName = "Red";
         String hallName = "GrandHall";
         String date = "2024-06-21";

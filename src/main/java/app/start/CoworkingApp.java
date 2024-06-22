@@ -39,7 +39,7 @@ public class CoworkingApp {
         int openTime = Integer.parseInt(configs.getProperty(ConfigKeys.OPEN_TIME));
         int closeTime = Integer.parseInt(configs.getProperty(ConfigKeys.CLOSE_TIME));
         BookingDao bookingDao = new InMemoryBookingDao(placeDao, openTime, closeTime);
-        UserOperations userOperations = new UserOperationsImpl(placeDao, bookingDao, reader);
+        UserOperations userOperations = new UserOperationsImpl(placeDao, bookingDao, reader, openTime, closeTime);
         AdminOperations adminOperations = new AdminOperationsImpl(placeDao, bookingDao, reader, userOperations);
         AdminOfficeService adminOfficeService = new AdminOfficeServiceImpl(reader, userOperations, adminOperations);
         UserOfficeService userOfficeService = new UserOfficeServiceImpl(reader, userOperations);

@@ -21,7 +21,7 @@ public class AdminOperationsImplTest {
         int closeTime = 22;
         PlaceDao placeDao = new InMemoryPlaceDao();
         BookingDao bookingDao = new InMemoryBookingDao(placeDao, openTime, closeTime);
-        UserOperations userOperations = new UserOperationsImpl(placeDao, bookingDao, crMock);
+        UserOperations userOperations = new UserOperationsImpl(placeDao, bookingDao, crMock, openTime, closeTime);
         AdminOperations adminOperations = new AdminOperationsImpl(placeDao, bookingDao, crMock, userOperations);
 
         String roomName = "Red";
@@ -37,7 +37,7 @@ public class AdminOperationsImplTest {
         int closeTime = 22;
         PlaceDao placeDao = new InMemoryPlaceDao();
         BookingDao bookingDao = new InMemoryBookingDao(placeDao, openTime, closeTime);
-        UserOperations userOperations = new UserOperationsImpl(placeDao, bookingDao, crMock);
+        UserOperations userOperations = new UserOperationsImpl(placeDao, bookingDao, crMock, openTime, closeTime);
         AdminOperations adminOperations = new AdminOperationsImpl(placeDao, bookingDao, crMock, userOperations);
 
         String roomName = "Red";
@@ -54,7 +54,7 @@ public class AdminOperationsImplTest {
         int closeTime = 22;
         PlaceDao placeDao = new InMemoryPlaceDao();
         BookingDao bookingDao = new InMemoryBookingDao(placeDao, openTime, closeTime);
-        UserOperations userOperations = new UserOperationsImpl(placeDao, bookingDao, crMock);
+        UserOperations userOperations = new UserOperationsImpl(placeDao, bookingDao, crMock, openTime, closeTime);
         AdminOperations adminOperations = new AdminOperationsImpl(placeDao, bookingDao, crMock, userOperations);
 
         String hallName = "GrandHall";
@@ -69,7 +69,7 @@ public class AdminOperationsImplTest {
         int closeTime = 22;
         PlaceDao placeDao = new InMemoryPlaceDao();
         BookingDao bookingDao = new InMemoryBookingDao(placeDao, openTime, closeTime);
-        UserOperations userOperations = new UserOperationsImpl(placeDao, bookingDao, crMock);
+        UserOperations userOperations = new UserOperationsImpl(placeDao, bookingDao, crMock, openTime, closeTime);
         AdminOperations adminOperations = new AdminOperationsImpl(placeDao, bookingDao, crMock, userOperations);
 
         String roomName1 = "Red";
@@ -89,7 +89,7 @@ public class AdminOperationsImplTest {
         int closeTime = 22;
         PlaceDao placeDao = new InMemoryPlaceDao();
         BookingDao bookingDao = new InMemoryBookingDao(placeDao, openTime, closeTime);
-        UserOperations userOperations = new UserOperationsImpl(placeDao, bookingDao, crMock);
+        UserOperations userOperations = new UserOperationsImpl(placeDao, bookingDao, crMock, openTime, closeTime);
         AdminOperations adminOperations = new AdminOperationsImpl(placeDao, bookingDao, crMock, userOperations);
 
         String roomName = "Red";
@@ -108,7 +108,7 @@ public class AdminOperationsImplTest {
         int closeTime = 22;
         PlaceDao placeDao = new InMemoryPlaceDao();
         BookingDao bookingDao = new InMemoryBookingDao(placeDao, openTime, closeTime);
-        UserOperations userOperations = new UserOperationsImpl(placeDao, bookingDao, crMock);
+        UserOperations userOperations = new UserOperationsImpl(placeDao, bookingDao, crMock, openTime, closeTime);
         AdminOperations adminOperations = new AdminOperationsImpl(placeDao, bookingDao, crMock, userOperations);
 
         String hallName = "GrandHall";
@@ -127,7 +127,7 @@ public class AdminOperationsImplTest {
         int closeTime = 22;
         PlaceDao placeDao = new InMemoryPlaceDao();
         BookingDao bookingDao = new InMemoryBookingDao(placeDao, openTime, closeTime);
-        UserOperations userOperations = new UserOperationsImpl(placeDao, bookingDao, crMock);
+        UserOperations userOperations = new UserOperationsImpl(placeDao, bookingDao, crMock, openTime, closeTime);
         AdminOperations adminOperations = new AdminOperationsImpl(placeDao, bookingDao, crMock, userOperations);
         String roomName = "Red";
         String date = "2024-06-23";
