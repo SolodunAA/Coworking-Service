@@ -64,14 +64,16 @@ public class Booking {
         return Objects.hash(userLogin, placeID, date, time, period);
     }
 
+
     @Override
     public String toString() {
         return "Booking{" +
+                "userLogin='" + userLogin + '\'' +
                 ", placeID=" + placeID +
                 ", date=" + date +
                 ", time=" + time +
                 ", period=" + period +
-                ", bookedSlots=" + bookedSlots.stream().sorted().collect(Collectors.toList()) +
+                ", bookedSlots=" + bookedSlots +
                 '}';
     }
 }

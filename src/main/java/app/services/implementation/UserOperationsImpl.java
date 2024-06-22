@@ -32,10 +32,11 @@ public class UserOperationsImpl implements UserOperations {
         Map<Integer, Set<Integer>> availableDesksAndHallsOnDate = bookingDao.getAvailableSlotsOnDate(LocalDate.parse(userAnswerDate));
         Map<Integer, String> deskIdToRoomName = placeDao.getMapOfAllDesks();
         ConsolePrinter.print("select from below slots");
-        availableDesksAndHallsOnDate.forEach((roomId, slots) -> {
-            String roomName = deskIdToRoomName.get(roomId);
+        availableDesksAndHallsOnDate.forEach((deskId, slots) -> {
+            String roomName = deskIdToRoomName.get(deskId);
             if (roomName != null) {
-                ConsolePrinter.print(roomName + " : " + slots.stream().sorted().collect(Collectors.toList()));
+                ConsolePrinter.print("room: " + roomName + " desk: " + deskId + " slots:" +
+                        slots.stream().sorted().collect(Collectors.toList()));
             }
         });
         ConsolePrinter.print("Enter start period of your booking. Example format for 1 pm: 13");
@@ -46,9 +47,12 @@ public class UserOperationsImpl implements UserOperations {
                 Integer.parseInt(userAnswerTime),
                 Integer.parseInt(userAnswerPeriod));
         ConsolePrinter.print("select from below slots");
-        availableDeskOnTime.forEach((roomId, slots) -> {
-            String roomName = deskIdToRoomName.get(roomId);
-            ConsolePrinter.print(roomName + " : " + slots.stream().sorted().collect(Collectors.toList()));
+        availableDeskOnTime.forEach((deskId, slots) -> {
+            String roomName = deskIdToRoomName.get(deskId);
+            if (roomName != null) {
+                ConsolePrinter.print("room: " + roomName + " desk: " + deskId + " slots:" +
+                        slots.stream().sorted().collect(Collectors.toList()));
+            }
         });
         ConsolePrinter.print("Select placeId");
         Integer userAnswerPlaceId = Integer.parseInt(reader.read());
@@ -87,7 +91,9 @@ public class UserOperationsImpl implements UserOperations {
         ConsolePrinter.print("select from below slots");
         availableDeskOnTime.forEach((roomId, slots) -> {
             String hallName = hallIdToName.get(roomId);
-            ConsolePrinter.print(hallName + " : " + slots.stream().sorted().collect(Collectors.toList()));
+            if (hallName != null) {
+                ConsolePrinter.print("hall name: " + hallName + " hall id: " + roomId + " available slots: " + slots.stream().sorted().collect(Collectors.toList()));
+            }
         });
         ConsolePrinter.print("Select placeId");
         Integer userAnswerPlaceId = Integer.parseInt(reader.read());
@@ -136,10 +142,11 @@ public class UserOperationsImpl implements UserOperations {
         ConsolePrinter.print("The following desks are available on this date");
         Map<Integer, Set<Integer>> availableDesksAndHallsOnDate = bookingDao.getAvailableSlotsOnDate(LocalDate.parse(userAnswerDate));
         Map<Integer, String> deskIdToRoomName = placeDao.getMapOfAllDesks();
-        availableDesksAndHallsOnDate.forEach((roomId, slots) -> {
-            String roomName = deskIdToRoomName.get(roomId);
+        availableDesksAndHallsOnDate.forEach((deskId, slots) -> {
+            String roomName = deskIdToRoomName.get(deskId);
             if (roomName != null) {
-                ConsolePrinter.print(roomName + " : " + slots.stream().sorted().collect(Collectors.toList()));
+                ConsolePrinter.print("room: " + roomName + " desk: " + deskId + " slots:" +
+                        slots.stream().sorted().collect(Collectors.toList()));
             }
         });
         ConsolePrinter.print("The following hall are available on this date");
@@ -168,11 +175,16 @@ public class UserOperationsImpl implements UserOperations {
                 Integer.parseInt(userAnswerPeriod));
         availableDeskOnTime.forEach((roomId, slots) -> {
             String hallName = hallIdToName.get(roomId);
-            ConsolePrinter.print(hallName + " : " + slots.stream().sorted().collect(Collectors.toList()));
+            if (hallName != null) {
+                ConsolePrinter.print("hall name: " + hallName + " hall id: " + roomId + " available slots: " + slots.stream().sorted().collect(Collectors.toList()));
+            }
         });
-        availableDeskOnTime.forEach((roomId, slots) -> {
-            String roomName = deskIdToRoomName.get(roomId);
-            ConsolePrinter.print(roomName + " : " + slots.stream().sorted().collect(Collectors.toList()));
+        availableDeskOnTime.forEach((deskId, slots) -> {
+            String roomName = deskIdToRoomName.get(deskId);
+            if (roomName != null) {
+                ConsolePrinter.print("room: " + roomName + " desk: " + deskId + " slots:" +
+                        slots.stream().sorted().collect(Collectors.toList()));
+            }
         });
     }
 
