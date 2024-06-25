@@ -34,7 +34,7 @@ public class CoworkingApp {
         PasswordEncoder passwordEncoder = new HashEncoder();
         LoginDao loginDao = new InMemoryLoginDao();
         AuthenticationService authenticationService = new AuthenticationServiceImpl(loginDao, passwordEncoder, reader);
-        RegistrationService registrationService = new RegistrationServiceImpl(passwordEncoder, loginDao, reader);
+        RegistrationService registrationService = new RegistrationServiceImpl(passwordEncoder, loginDao, reader, userRoleDao);
         PlaceDao placeDao = new InMemoryPlaceDao();
         int openTime = Integer.parseInt(configs.getProperty(ConfigKeys.OPEN_TIME));
         int closeTime = Integer.parseInt(configs.getProperty(ConfigKeys.CLOSE_TIME));

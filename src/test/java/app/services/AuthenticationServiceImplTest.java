@@ -3,7 +3,9 @@ package app.services;
 import app.auxiliaryfunctions.HashEncoder;
 import app.auxiliaryfunctions.PasswordEncoder;
 import app.dao.LoginDao;
+import app.dao.UserRoleDao;
 import app.dao.inMemoryDao.InMemoryLoginDao;
+import app.dao.inMemoryDao.InMemoryUserRolesDao;
 import app.in.ConsoleReader;
 import app.services.implementation.AuthenticationServiceImpl;
 import app.services.implementation.RegistrationServiceImpl;
@@ -34,7 +36,8 @@ public class AuthenticationServiceImplTest {
         PasswordEncoder passwordEncoder = new HashEncoder();
         AuthenticationService authenticationService = new AuthenticationServiceImpl(loginDao, passwordEncoder, crMock);
         PasswordEncoder encoder = new HashEncoder();
-        RegistrationService registrationService = new RegistrationServiceImpl(encoder, loginDao, crMock);
+        UserRoleDao userRoleDao = new InMemoryUserRolesDao();
+        RegistrationService registrationService = new RegistrationServiceImpl(encoder, loginDao, crMock, userRoleDao);
 
         String loginReg = "user";
         String passwordReg = "password";

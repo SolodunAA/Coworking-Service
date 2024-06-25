@@ -3,7 +3,9 @@ package app.services;
 import app.auxiliaryfunctions.HashEncoder;
 import app.auxiliaryfunctions.PasswordEncoder;
 import app.dao.LoginDao;
+import app.dao.UserRoleDao;
 import app.dao.inMemoryDao.InMemoryLoginDao;
+import app.dao.inMemoryDao.InMemoryUserRolesDao;
 import app.in.ConsoleReader;
 import app.services.implementation.RegistrationServiceImpl;
 import org.junit.Test;
@@ -19,7 +21,9 @@ public class RegistrationServiceImplTest {
         String password = "password";
         PasswordEncoder encoder = new HashEncoder();
         LoginDao loginDao = new InMemoryLoginDao();
-        RegistrationService registrationService = new RegistrationServiceImpl(encoder, loginDao, crMock);
+        UserRoleDao userRoleDao = new InMemoryUserRolesDao();
+
+        RegistrationService registrationService = new RegistrationServiceImpl(encoder, loginDao, crMock, userRoleDao);
 
         Mockito.when(crMock.read()).thenReturn(login, password);
 
@@ -39,7 +43,8 @@ public class RegistrationServiceImplTest {
         String password2 = "password2";
         PasswordEncoder encoder = new HashEncoder();
         LoginDao loginDao = new InMemoryLoginDao();
-        RegistrationService registrationService = new RegistrationServiceImpl(encoder, loginDao, crMock);
+        UserRoleDao userRoleDao = new InMemoryUserRolesDao();
+        RegistrationService registrationService = new RegistrationServiceImpl(encoder, loginDao, crMock, userRoleDao);
 
 
         //successfully register
