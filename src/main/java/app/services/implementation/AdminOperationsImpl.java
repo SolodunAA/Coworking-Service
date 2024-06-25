@@ -33,15 +33,14 @@ public class AdminOperationsImpl implements AdminOperations {
         ConsolePrinter.print("Select sort by: 1-by date, 2-by user, 3-place id");
         int comparatorId = Integer.parseInt(reader.read());
         Comparator<Booking> bookingComparator;
-        if (comparatorId == 1) {
-            bookingComparator = Comparator.comparing(Booking::getDate);
-        } else if (comparatorId == 2) {
-            bookingComparator = Comparator.comparing(Booking::getUserLogin);
-        } else if(comparatorId == 3) {
-            bookingComparator = Comparator.comparing(Booking::getPlaceID);
-        } else {
-            ConsolePrinter.print("invalid sorting id");
-            return;
+        switch (comparatorId) {
+            case (1) -> bookingComparator = Comparator.comparing(Booking::getDate);
+            case (2) -> bookingComparator = Comparator.comparing(Booking::getUserLogin);
+            case (3) -> bookingComparator = Comparator.comparing(Booking::getPlaceID);
+            default -> {
+                ConsolePrinter.print("invalid sorting id");
+                return;
+            }
         }
         var sortedBookings = bookingDao.getAllBookingsAllUsers().values().stream()
                 .flatMap(Collection::stream)

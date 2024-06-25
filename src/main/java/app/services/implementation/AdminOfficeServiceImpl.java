@@ -22,16 +22,18 @@ public class AdminOfficeServiceImpl implements AdminOfficeService {
     public void run() {
         boolean exit = false;
         while (!Thread.currentThread().isInterrupted() && !exit) {
-            ConsolePrinter.print("Choose your action");
-            ConsolePrinter.print("Enter 1 if you want to see all bookings");
-            ConsolePrinter.print("Enter 2 if you want to see all bookings for user");
-            ConsolePrinter.print("Enter 3 if you want to delete desk");
-            ConsolePrinter.print("Enter 4 if you want to delete hall");
-            ConsolePrinter.print("Enter 5 if you want to add desk");
-            ConsolePrinter.print("Enter 6 if you want to add hall");
-            ConsolePrinter.print("Enter 7 if you want to add room");
-            ConsolePrinter.print("Enter 8 if you want to delete room");
-            ConsolePrinter.print("Enter 9 to exit");
+            ConsolePrinter.print("""
+                    Choose your action
+                    Enter 1 if you want to see all bookings
+                    Enter 2 if you want to see all bookings for user
+                    Enter 3 if you want to delete desk
+                    Enter 4 if you want to delete hall
+                    Enter 5 if you want to add desk
+                    Enter 6 if you want to add hall
+                    Enter 7 if you want to add room
+                    Enter 8 if you want to delete room
+                    Enter 9 to exit
+                    """);
             String userAnswer = reader.read();
             switch (userAnswer) {
                 case ("1") -> adminOperations.viewAllBookings();

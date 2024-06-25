@@ -18,16 +18,18 @@ public class UserOfficeServiceImpl implements UserOfficeService {
     public void run(String login) {
         boolean exit = false;
         while (!Thread.currentThread().isInterrupted() && !exit) {
-            ConsolePrinter.print("Choose your action");
-            ConsolePrinter.print("Enter 1 if you want to see all places in coworking");
-            ConsolePrinter.print("Enter 2 if you want to see all available slots on date");
-            ConsolePrinter.print("Enter 3 if you want to see all available slots on date and time");
-            ConsolePrinter.print("Enter 4 if you want to book a desk");
-            ConsolePrinter.print("Enter 5 if you want to book a hall");
-            ConsolePrinter.print("Enter 6 if you want to see all your bookings");
-            ConsolePrinter.print("Enter 7 if you want to change your bookings");
-            ConsolePrinter.print("Enter 8 if you want to delete your bookings");
-            ConsolePrinter.print("Enter 9 to exit");
+            ConsolePrinter.print("""
+                            Choose your action
+                            Enter 1 if you want to see all places in coworking
+                            Enter 2 if you want to see all available slots on date
+                            Enter 3 if you want to see all available slots on date and time
+                            Enter 4 if you want to book a desk
+                            Enter 5 if you want to book a hall
+                            Enter 6 if you want to see all your bookings
+                            Enter 7 if you want to change your bookings
+                            Enter 8 if you want to delete your bookings
+                            Enter 9 to exit
+                            """);
             String userAnswer = reader.read();
             switch (userAnswer) {
                 case ("1") -> userOperations.viewAllPlaces();

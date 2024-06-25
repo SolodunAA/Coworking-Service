@@ -15,7 +15,7 @@ public interface BookingDao {
      */
     Map<Integer, Set<Integer>> getAvailableSlotsOnDate(LocalDate date);
     /**
-     *
+     * get all available desks on this date and time
      * @param date selected date
      * @param time selected time
      * @param period booking period

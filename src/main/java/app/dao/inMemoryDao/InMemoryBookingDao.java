@@ -43,7 +43,7 @@ public class InMemoryBookingDao implements BookingDao {
 
         for (Integer placeId : placeIds) {
             Set<Integer> availableSlots = new HashSet<>(validAvailableSlots);
-            var bookedSlots = bookingStorage
+            Set<Integer> bookedSlots = bookingStorage
                     .getOrDefault(placeId, Map.of())
                     .getOrDefault(date, Set.of());
             availableSlots.removeAll(bookedSlots);

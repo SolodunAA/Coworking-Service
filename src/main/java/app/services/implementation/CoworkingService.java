@@ -46,9 +46,11 @@ public class CoworkingService {
     }
 
     private void runUserInteractions() {
-        ConsolePrinter.print("Print 1 if you want to register");
-        ConsolePrinter.print("Print 2 if you want to login");
-        ConsolePrinter.print("Print 3 if you want to stop server");
+        ConsolePrinter.print("""
+                Print 1 if you want to register
+                Print 2 if you want to login
+                Print 3 if you want to stop server
+                """);
         String input = reader.read();
         switch (input) {
             case "1" -> registrationService.register();
