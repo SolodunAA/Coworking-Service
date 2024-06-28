@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd"
+        logicalFilePath="db/changelog.xml">
+    <changeSet id="004_create_place_table.xml" author="Solodun">
+        <createSequence sequenceName="place_id_seq" schemaName="coworking"
+                        minValue="1"
+                        dataType="BIGINT"/>
+        <createTable tableName="place_table" schemaName="coworking" remarks="table with all places in coworking its id, name and type">
+            <column name="place_id" type="BIGINT" defaultValueComputed="nextval('coworking.place_id_seq')" remarks="unique id">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="place_name" type="VARCHAR(255)" remarks="name of the place">
+                <constraints unique="true" nullable="false"/>
+            </column>
+            <column name="place_type" type="VARCHAR(255)" remarks="place type: hall or room">
+                <constraints checkConstraint="place_type IN ('hall', 'room')"/>
+            </column>
+        </createTable>
+
+    </changeSet>
+
+</databaseChangeLog>

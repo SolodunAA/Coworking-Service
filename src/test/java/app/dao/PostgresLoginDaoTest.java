@@ -1,40 +1,28 @@
-package app.services;
+package app.dao;
 
-import app.auxiliaryfunctions.HashEncoder;
-import app.auxiliaryfunctions.PasswordEncoder;
-import app.dao.LoginDao;
+
 import app.dao.postgresDao.PostgresLoginDao;
-import app.in.ConsoleReader;
-import app.services.implementation.AuthenticationServiceImpl;
-import app.services.implementation.RegistrationServiceImpl;
 import liquibase.Liquibase;
 import liquibase.database.Database;
 import liquibase.database.DatabaseFactory;
 import liquibase.database.jvm.JdbcConnection;
 import liquibase.resource.ClassLoaderResourceAccessor;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.jupiter.api.DisplayName;
-import org.mockito.Mockito;
 import org.testcontainers.containers.PostgreSQLContainer;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-public class AuthenticationServiceImplTest {
+public class PostgresLoginDaoTest {
     static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>(
             "postgres:15-alpine"
     );
-    private final LoginDao loginDao = new PostgresLoginDao(postgres.getJdbcUrl(), postgres.getUsername(), postgres.getPassword());
-    private final ConsoleReader crMock = Mockito.mock(ConsoleReader.class);
-    private final PasswordEncoder encoder = new HashEncoder();
-    private final AuthenticationService authenticationService = new AuthenticationServiceImpl(loginDao, encoder, crMock);
-    private final RegistrationService registrationService = new RegistrationServiceImpl(encoder, loginDao, crMock);
 
+    private final LoginDao loginDao = new PostgresLoginDao(postgres.getJdbcUrl(), postgres.getUsername(), postgres.getPassword());
 
     @BeforeClass
     public static void beforeAll() {
@@ -71,40 +59,52 @@ public class AuthenticationServiceImplTest {
             throw new RuntimeException(e);
         }
     }
+
     @Test
-    @DisplayName("authentication of unknown user")
-    public void authUnknownUserTest() {
+    @DisplayName("checking the addition of a new user to the user table")
+    public void addNewUserTest() {
 
-        String login = "user1";
-        String password = "password1";
-        Mockito.when(crMock.read()).thenReturn(login, password);
+        String newLogin = "login";
+        int encodedPassword = 12345;
 
-        assertThat(authenticationService.auth()).isNull();
+        loginDao.addNewUser(newLogin, encodedPassword);
+
+        assertThat(loginDao.checkIfUserExist(newLogin)).isTrue();
     }
 
     @Test
-    @DisplayName("authentication with wrong password")
-    public void authWrongPasswordTest() {
+    @DisplayName("checks the impossibility of adding a second user with the same login")
+    public void addDuplicateUserTest() {
 
-        String loginReg = "user";
-        String passwordReg = "password";
-        String passwordWrong ="1234";
-        Mockito.when(crMock.read()).thenReturn(loginReg, passwordReg, loginReg, passwordWrong);
+        String newLogin = "login";
+        int encodedPassword1 = 12345;
+        int encodedPassword2 = 123456;
 
-        registrationService.register();
+        loginDao.addNewUser(newLogin, encodedPassword1);
 
-        assertThat(authenticationService.auth()).isNull();
+        assertThatThrownBy(() -> loginDao.addNewUser(newLogin, encodedPassword2)).isExactlyInstanceOf(RuntimeException.class);
     }
 
     @Test
-    @DisplayName("successfully authentication")
-    public void authTest() {
-        String login = "user";
-        String password = "password";
+    @DisplayName("verification of receipt of password by login")
+    public void getEncodedPasswordTest() {
 
-        Mockito.when(crMock.read()).thenReturn(login, password, login, password);
-        registrationService.register();
+        String newLogin = "login";
+        int encodedPassword = 12345;
 
-        assertThat(authenticationService.auth()).isEqualTo(login);
+        loginDao.addNewUser(newLogin, encodedPassword);
+
+        assertThat(loginDao.getEncodedPassword(newLogin)).isEqualTo(encodedPassword);
     }
+    @Test
+    @DisplayName("testing a method to check whether such a login exists in the user table")
+    public void checkIfUserExistTest() {
+
+        String newLogin = "login";
+        int encodedPassword = 12345;
+
+        loginDao.addNewUser(newLogin, encodedPassword);
+        assertThat(loginDao.checkIfUserExist(newLogin)).isTrue();
+    }
+
 }

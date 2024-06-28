@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd"
+        logicalFilePath="db/changelog.xml">
+    <changeSet id="007_create_foreign_key.xml" author="Solodun">
+
+        <addForeignKeyConstraint baseTableName="password_table"
+                                 baseColumnNames="user_id"
+                                 constraintName="fk_user_login_password"
+                                 referencedTableName="user_table"
+                                 referencedColumnNames="user_id"
+                                 baseTableSchemaName="admin"
+                                 referencedTableSchemaName="admin"
+                                 deleteCascade="true"/>
+
+        <addForeignKeyConstraint baseTableName="desk_table"
+                                 baseColumnNames="place_id"
+                                 constraintName="fk_place_id_desk"
+                                 referencedTableName="place_table"
+                                 referencedColumnNames="place_id"
+                                 baseTableSchemaName="coworking"
+                                 referencedTableSchemaName="coworking"
+                                 deleteCascade="true"/>
+
+        <addForeignKeyConstraint baseTableName="booking_table"
+                                 baseColumnNames="user_id"
+                                 constraintName="fk_booking_user_id"
+                                 referencedTableName="user_table"
+                                 referencedColumnNames="user_id"
+                                 baseTableSchemaName="coworking"
+                                 referencedTableSchemaName="admin"
+                                 deleteCascade="true"/>
+
+        <addForeignKeyConstraint baseTableName="booking_table"
+                                 baseColumnNames="place_id"
+                                 constraintName="fk_booking_place_id"
+                                 referencedTableName="place_table"
+                                 referencedColumnNames="place_id"
+                                 baseTableSchemaName="coworking"
+                                 referencedTableSchemaName="coworking"
+                                 deleteCascade="true"/>
+
+        <addForeignKeyConstraint baseTableName="booking_table"
+                                 baseColumnNames="desk_id"
+                                 constraintName="fk_booking_desk_id"
+                                 referencedTableName="desk_table"
+                                 referencedColumnNames="desk_id"
+                                 baseTableSchemaName="coworking"
+                                 referencedTableSchemaName="coworking"
+                                 deleteCascade="true"/>
+    </changeSet>
+</databaseChangeLog>

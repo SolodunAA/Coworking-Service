@@ -1,4 +1,7 @@
 package app.dao;
+
+import app.dto.Role;
+
 /**
  * storing user's logins and passwords
  */
@@ -21,4 +24,10 @@ public interface LoginDao {
      * @return encoded password
      */
     int getEncodedPassword(String login);
+
+    /**
+     * get user role
+     * @param login user login
+     */
+   Role getUserRole(String login);
 }

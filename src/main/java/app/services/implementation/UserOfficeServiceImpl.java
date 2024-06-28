@@ -22,25 +22,23 @@ public class UserOfficeServiceImpl implements UserOfficeService {
                             Choose your action
                             Enter 1 if you want to see all places in coworking
                             Enter 2 if you want to see all available slots on date
-                            Enter 3 if you want to see all available slots on date and time
-                            Enter 4 if you want to book a desk
-                            Enter 5 if you want to book a hall
-                            Enter 6 if you want to see all your bookings
-                            Enter 7 if you want to change your bookings
-                            Enter 8 if you want to delete your bookings
-                            Enter 9 to exit
+                            Enter 3 if you want to book a desk
+                            Enter 4 if you want to book a hall
+                            Enter 5 if you want to see all your bookings
+                            Enter 6 if you want to change your bookings
+                            Enter 7 if you want to delete your bookings
+                            Enter 8 to exit
                             """);
             String userAnswer = reader.read();
             switch (userAnswer) {
-                case ("1") -> userOperations.viewAllPlaces();
-                case ("2") -> userOperations.viewAllAvailableSlotsOnDate();
-                case ("3") -> userOperations.viewAllAvailableSlotsOnDateAndTime();
-                case ("4") -> userOperations.bookDesk(login);
-                case ("5") -> userOperations.bookHall(login);
-                case ("6") -> userOperations.viewAllMyBooking(login);
-                case ("7") -> userOperations.changeBooking(login);
-                case ("8") -> userOperations.deleteBookings(login);
-                case ("9") -> exit = true;
+                case ("1") -> userOperations.getAllPlaces();
+                case ("2") -> userOperations.getAllAvailableSlotsOnDate();
+                case ("3") -> userOperations.bookDesk(login);
+                case ("4") -> userOperations.bookHall(login);
+                case ("5") -> userOperations.getAllUserBooking(login);
+                case ("6") -> userOperations.changeBooking(login);
+                case ("7") -> userOperations.deleteBookings(login);
+                case ("8") -> exit = true;
                 default -> ConsolePrinter.print("Wrong enter. Try again.");
             }
         }

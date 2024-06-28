@@ -3,50 +3,61 @@ package app.dao;
 import app.dto.Booking;
 
 import java.time.LocalDate;
-import java.util.Collection;
+import java.time.LocalTime;
 import java.util.Map;
 import java.util.Set;
 
 public interface BookingDao {
     /**
-     * showing all available desks on this date
+     * showing all available slots for desks on this date
      * @param date selected date
-     * @return map, key - is place id, value - available slots
+     * @param roomName the name of room there checking available slots
+     * @return map, key - is desk number, value - available slots
      */
-    Map<Integer, Set<Integer>> getAvailableSlotsOnDate(LocalDate date);
+    Map<Integer, Set<LocalTime>> getAvailableRoomDesksSlotsOnDate(LocalDate date, String roomName);
     /**
-     * get all available desks on this date and time
+     * showing all available slots for halls on this date
      * @param date selected date
-     * @param time selected time
-     * @param period booking period
-     * @return map, key - is place id, value - available slots
+     * @return map, key - is hall name, value - available slots
      */
-    Map<Integer, Set<Integer>> getAvailableSlotsOnDateAndAtTimes(LocalDate date, int time, int period);
+    Map<String, Set<LocalTime>> getAvailableHallsSlotsOnDate(LocalDate date);
 
     /**
-     * add new place booking
+     * add new hall booking
      * @param userLogin user's login
+     * @param hallName hall name
      * @param date booking date
-     * @param time booking time
-     * @param period booking period
-     * @param placeId place id
+     * @param startTime booking start time
+     * @param endTime booking end time
      * @return status
      */
-    String addNewBooking(String userLogin, LocalDate date, int time, int period, int placeId);
+    String addNewHallBooking(String userLogin, String hallName, LocalDate date, LocalTime startTime, LocalTime endTime);
+
+    /**
+     * add new desk booking
+     * @param userLogin user's login
+     * @param roomName room name
+     * @param deskNumber desktop number
+     * @param date booking date
+     * @param startTime booking start time
+     * @param endTime booking end time
+     * @return status
+     */
+    String addNewDeskBooking(String userLogin, String roomName, int deskNumber, LocalDate date, LocalTime startTime, LocalTime endTime);
 
     /**
      * delete place booking
-     * @param booking booking to delete
+     * @param bookingId booking id to delete
      * @return status
      */
-    String deleteBooking(Booking booking);
+    String deleteBooking(int bookingId);
 
     /**
      * show all user bookings
      * @param userLogin login of user
-     * @return list of user bookings
+     * @return set of user bookings
      */
-    Collection<Booking> showAllBookingsForUser(String userLogin);
+    Set<Booking> getAllBookingsForUser(String userLogin);
 
     /**
      * show all bookings for all users
@@ -55,21 +66,30 @@ public interface BookingDao {
     Map<String, Set<Booking>> getAllBookingsAllUsers();
 
     /**
-     * update booking of hall
-     * @param bookingToChange booking to change
-     * @param newDate
-     * @param newTime
-     * @param newPeriod
+     * change booking time
+     * @param bookingId booking id for changing
+     * @param startTime new start booking time
+     * @param endTime new end booking time
      * @return status
      */
-    String changeBooking(Booking bookingToChange, LocalDate newDate, int newTime, int newPeriod);
+    String changeBookingTime(int bookingId, LocalTime startTime, LocalTime endTime);
 
     /**
-     * show all bookings for place
-     * @param placeID place id
-     * @return map, key is date, velue - set of available slots
+     * change date time
+     * @param bookingId id booking for changing
+     * @param date new date
+     * @param startTime new start time of booking
+     * @param endTime new end time of booking
+     * @return status
      */
-    Map<LocalDate, Set<Integer>> showAllBookingsForPlace(Integer placeID);
+    String changeBookingDate(int bookingId, LocalDate date, LocalTime startTime, LocalTime endTime);
+
+    /**
+     * get booking by id
+     * @param bookingId id booking
+     * @return Booking with this id
+     */
+    Booking getBookingById(int bookingId);
 
 
 }

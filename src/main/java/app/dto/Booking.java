@@ -1,50 +1,55 @@
 package app.dto;
 
 import java.time.LocalDate;
-import java.util.Date;
-import java.util.HashSet;
+import java.time.LocalTime;
 import java.util.Objects;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 public class Booking {
+    private final int bookingID;
     private final String userLogin;
-    private final int placeID;
+    private final String placeName;
+    private final int deskNumber;
     private final LocalDate date;
-    private final int time;
-    private final int period;
-    private final Set<Integer> bookedSlots;
+    private final LocalTime startTime;
+    private final LocalTime endTime;
 
-    public Booking(String userLogin, int tableId, LocalDate date, int time, int period) {
+    public Booking(int bookingID, String userLogin, String placeName, int deskNumber, LocalDate date, LocalTime startTime, LocalTime endTime) {
+        this.bookingID = bookingID;
         this.userLogin = userLogin;
-        this.placeID = tableId;
+        this.placeName = placeName;
+        this.deskNumber = deskNumber;
         this.date = date;
-        this.time = time;
-        this.period = period;
-        this.bookedSlots = new HashSet<>();
-        for (int i = time; i <= time + period; i++) {
-            bookedSlots.add(i);
-        }
+        this.startTime = startTime;
+        this.endTime = endTime;
     }
 
     public String getUserLogin() {
         return userLogin;
     }
 
-    public int getPlaceID() {
-        return placeID;
+    public String getPlaceName() {
+        return placeName;
+    }
+
+    public int getDeskNumber() {
+        return deskNumber;
     }
 
     public LocalDate getDate() {
         return date;
     }
 
-    public int getTime() {
-        return time;
+    public LocalTime getStartTime() {
+        return startTime;
     }
 
-    public Set<Integer> getBookedSlots() {
-        return bookedSlots;
+    public LocalTime getEndTime() {
+        return endTime;
+    }
+
+
+    public int getBookingID() {
+        return bookingID;
     }
 
     @Override
@@ -52,28 +57,24 @@ public class Booking {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Booking booking = (Booking) o;
-        return placeID == booking.placeID
-                && time == booking.time
-                && period == booking.period
-                && Objects.equals(userLogin, booking.userLogin)
-                && Objects.equals(date, booking.date);
+        return bookingID == booking.bookingID && Objects.equals(userLogin, booking.userLogin) && Objects.equals(placeName, booking.placeName) && Objects.equals(deskNumber, booking.deskNumber) && Objects.equals(date, booking.date) && Objects.equals(startTime, booking.startTime) && Objects.equals(endTime, booking.endTime);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(userLogin, placeID, date, time, period);
+        return Objects.hash(bookingID, userLogin, placeName, deskNumber, date, startTime, endTime);
     }
-
 
     @Override
     public String toString() {
         return "Booking{" +
-                "userLogin='" + userLogin + '\'' +
-                ", placeID=" + placeID +
+                "bookingID=" + bookingID +
+                ", userLogin='" + userLogin + '\'' +
+                ", placeName='" + placeName + '\'' +
+                ", deskNumber=" + deskNumber +
                 ", date=" + date +
-                ", time=" + time +
-                ", period=" + period +
-                ", bookedSlots=" + bookedSlots +
+                ", startTime=" + startTime +
+                ", endTime=" + endTime +
                 '}';
     }
 }
