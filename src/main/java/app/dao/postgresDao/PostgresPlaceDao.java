@@ -7,7 +7,6 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 public class PostgresPlaceDao implements PlaceDao {

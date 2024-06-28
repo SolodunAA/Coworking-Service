@@ -3,7 +3,6 @@ package app.dao.postgresDao;
 import app.dao.BookingDao;
 import app.dao.PlaceDao;
 import app.dto.Booking;
-import app.out.ConsolePrinter;
 
 import java.sql.*;
 import java.sql.Date;

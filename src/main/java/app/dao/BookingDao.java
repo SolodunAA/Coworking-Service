@@ -91,5 +91,4 @@ public interface BookingDao {
      */
     Booking getBookingById(int bookingId);
 
-
 }
