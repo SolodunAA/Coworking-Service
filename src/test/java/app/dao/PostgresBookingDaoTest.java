@@ -70,6 +70,8 @@ public class PostgresBookingDaoTest {
             var st = connection.createStatement();
             st.execute("TRUNCATE TABLE coworking.booking_table CASCADE");
             st.execute("TRUNCATE TABLE admin.user_table CASCADE");
+            st.execute("ALTER SEQUENCE coworking.booking_id_seq RESTART WITH 1");
+            ;
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
