@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd"
+        logicalFilePath="db/changelog.xml">
+    <changeSet id="006_create_booking_table.xml" author="Solodun">
+        <createSequence sequenceName="booking_id_seq" schemaName="coworking"
+                        minValue="1"
+                        dataType="BIGINT"/>
+        <createTable tableName="booking_table" schemaName="coworking" remarks="table with all bookings in coworking">
+            <column name="booking_id" type="BIGINT" defaultValueComputed="nextval('coworking.booking_id_seq')" remarks="unique id">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="user_id" type="BIGINT" remarks="user id, who booked slots, used as FK from user_table">
+                <constraints nullable="false"/>
+            </column>
+            <column name="place_id" type="BIGINT" remarks="booked place id, FK from place_table">
+                <constraints nullable="false"/>
+            </column>
+            <column name="desk_id" type="BIGINT" remarks="booked desk id, FK from desk_table">
+            </column>
+            <column name="date" type="DATE" remarks="date of booking">
+                <constraints nullable="false"/>
+            </column>
+            <column name="start_time" type="TIME" remarks="start time of booking">
+                <constraints nullable="false"/>
+            </column>
+            <column name="end_time" type="TIME" remarks="end time of booking">
+                <constraints nullable="false"/>
+            </column>
+
+        </createTable>
+
+    </changeSet>
+
+</databaseChangeLog>

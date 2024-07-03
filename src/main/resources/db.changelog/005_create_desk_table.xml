@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd"
+        logicalFilePath="db/changelog.xml">
+    <changeSet id="005_create_desk_table.xml" author="Solodun">
+        <createSequence sequenceName="desk_id_seq" schemaName="coworking"
+                        minValue="1"
+                        dataType="BIGINT"/>
+        <createTable tableName="desk_table" schemaName="coworking" remarks="table with all desks in coworking its id, its number in the room and id place it is in">
+            <column name="desk_id" type="BIGINT" defaultValueComputed="nextval('coworking.desk_id_seq')" remarks="unique id">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="desk_number" type="BIGINT" remarks="number of desk in room">
+                <constraints nullable="false"/>
+            </column>
+            <column name="place_id" type="BIGINT" remarks="place id there is this table FK from place_id">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+    </changeSet>
+
+</databaseChangeLog>

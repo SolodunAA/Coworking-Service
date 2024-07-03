@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd"
+        logicalFilePath="db/changelog.xml">
+    <changeSet id="002_create_user_table.xml" author="Solodun">
+        <createSequence sequenceName="user_id_seq" schemaName="admin"
+                        minValue="1"
+                        dataType="BIGINT"/>
+        <createTable tableName="user_table" schemaName="admin" remarks="table with user_id(PK), user login, user role. User_id used as FK across other tables">
+            <column name="user_id" type="BIGINT" defaultValueComputed="nextval('admin.user_id_seq')" remarks="unique user id">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="user_login" type="VARCHAR(255)" remarks="user login">
+                <constraints unique="true" nullable="false"/>
+            </column>
+            <column name="role" type="VARCHAR(255)" remarks="user role: admin or user">
+                <constraints checkConstraint="role IN ('admin', 'user')"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+</databaseChangeLog>

@@ -12,7 +12,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final Reader reader;
 
 
-
     public AuthenticationServiceImpl(LoginDao loginDao,
                                      PasswordEncoder passwordEncoder,
                                      Reader reader) {
@@ -23,23 +22,28 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public String auth() {
-        ConsolePrinter.print("Enter login");
-        String login = reader.read();
-        ConsolePrinter.print("Enter password");
-        String pswd = reader.read();
-        boolean isUserExists = loginDao.checkIfUserExist(login);
-        if (isUserExists) {
-            int encodedPswd = passwordEncoder.encode(pswd);
-            int savedEncodedPswd = loginDao.getEncodedPassword(login);
-            if (encodedPswd == savedEncodedPswd) {
-                ConsolePrinter.print("Login Successful");
-                return login;
+        try {
+            ConsolePrinter.print("Enter login");
+            String login = reader.read();
+            ConsolePrinter.print("Enter password");
+            String pswd = reader.read();
+            boolean isUserExists = loginDao.checkIfUserExist(login);
+            if (isUserExists) {
+                int encodedPswd = passwordEncoder.encode(pswd);
+                int savedEncodedPswd = loginDao.getEncodedPassword(login);
+                if (encodedPswd == savedEncodedPswd) {
+                    ConsolePrinter.print("Login Successful");
+                    return login;
+                } else {
+                    ConsolePrinter.print("Wrong login or password");
+                }
+
             } else {
                 ConsolePrinter.print("Wrong login or password");
             }
-
-        } else {
-            ConsolePrinter.print("Wrong login or password");
+            return null;
+        } catch (Exception e) {
+            ConsolePrinter.print("Something went wrong, try again");
         }
         return null;
     }

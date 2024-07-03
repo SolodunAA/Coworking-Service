@@ -1,0 +1,12 @@
+# Use postgres/example user/password credentials
+services:
+
+  db:
+    image: postgres:latest
+    restart: unless-stopped
+    environment:
+      POSTGRES_PASSWORD: 1111
+      POSTGRES_USER: coworking_user
+      POSTGRES_DB: coworkingDB
+    ports:
+      - "5433:5432"

@@ -1,6 +1,7 @@
 package app.services.implementation;
 
-import app.dao.UserRoleDao;
+import app.dao.LoginDao;
+import app.dao.postgresDao.PostgresLoginDao;
 import app.dto.Role;
 import app.in.Reader;
 import app.out.ConsolePrinter;
@@ -9,6 +10,8 @@ import app.services.AuthenticationService;
 import app.services.RegistrationService;
 import app.services.UserOfficeService;
 
+import java.time.LocalDate;
+
 public class CoworkingService {
 
     private final AdminOfficeService adminOfficeService;
@@ -16,20 +19,19 @@ public class CoworkingService {
     private final RegistrationService registrationService;
     private final AuthenticationService authenticationService;
     private final Reader reader;
-    private final UserRoleDao userRoleDao;
+    private final LoginDao loginDao;
 
     public CoworkingService(AdminOfficeService adminOfficeService,
                             UserOfficeService userOfficeService,
                             RegistrationService registrationService,
                             AuthenticationService authenticationService,
-                            Reader reader,
-                            UserRoleDao userRoleDao) {
+                            Reader reader, LoginDao loginDao) {
         this.adminOfficeService = adminOfficeService;
         this.userOfficeService = userOfficeService;
         this.registrationService = registrationService;
         this.authenticationService = authenticationService;
         this.reader = reader;
-        this.userRoleDao = userRoleDao;
+        this.loginDao = loginDao;
     }
 
 
@@ -57,7 +59,7 @@ public class CoworkingService {
             case "2" -> {
                 String login = authenticationService.auth();
                 if (login != null) {
-                    Role role = userRoleDao.getUserRole(login);
+                    Role role = loginDao.getUserRole(login);
                     if (role == Role.ADMIN) {
                         adminOfficeService.run();
                     } else {

@@ -20,22 +20,18 @@ public interface UserOperations {
      * view all my bookings
      * @param login user login
      */
-    void viewAllMyBooking(String login);
+    void getAllUserBooking(String login);
 
     /**
      * view all places in coworking
      */
-    void viewAllPlaces();
+    void getAllPlaces();
 
     /**
      * view all available slots on date
      */
-    void viewAllAvailableSlotsOnDate();
+    void getAllAvailableSlotsOnDate();
 
-    /**
-     * view all available slots on date and time
-     */
-    void viewAllAvailableSlotsOnDateAndTime();
 
     /**
      * delete bookings

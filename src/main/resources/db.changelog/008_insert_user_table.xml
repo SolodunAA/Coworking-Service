@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd"
+        logicalFilePath="db/changelog.xml">
+    <changeSet id="008_insert_user_table.xml" author="Solodun">
+        <insert tableName="user_table" schemaName="admin">
+            <column name="user_id" valueSequenceNext="user_id_seq"/>
+            <column name="user_login" value="admin"/>
+            <column name="role" value="admin"/>
+        </insert>
+    </changeSet>
+</databaseChangeLog>

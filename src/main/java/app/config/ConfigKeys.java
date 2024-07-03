@@ -8,5 +8,9 @@ public class ConfigKeys {
     public static final String DEFAULT_HALLS = "default_halls";
     public static final String OPEN_TIME = "open_time";
     public static final String CLOSE_TIME = "close_time";
+    public static final String DB_URL = "db_url";
+    public static final String DB_PASSWORD = "db_password";
+    public static final String DB_USER = "db_user";
+    public static final String PATH_CHANGELOG = "changelog_path";
 
 }

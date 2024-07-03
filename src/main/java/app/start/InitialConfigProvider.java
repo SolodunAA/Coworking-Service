@@ -1,33 +1,28 @@
 package app.start;
 
-import app.config.ConfigKeys;
-import app.dao.LoginDao;
-import app.dao.PlaceDao;
-import app.dao.UserRoleDao;
-import app.dto.Role;
+import liquibase.Liquibase;
+import liquibase.database.Database;
+import liquibase.database.DatabaseFactory;
+import liquibase.database.jvm.JdbcConnection;
+import liquibase.resource.ClassLoaderResourceAccessor;
 
-import java.util.Properties;
+import java.sql.Connection;
+import java.sql.DriverManager;
 
 public class InitialConfigProvider {
 
-    public static void setInitialConfigs(Properties configs, LoginDao loginDao, UserRoleDao userRoleDao, PlaceDao placeDao) {
-        String adminLogin = configs.getProperty(ConfigKeys.ADMIN_LOGIN);
-        loginDao.addNewUser(
-                adminLogin,
-                Integer.parseInt(configs.getProperty(ConfigKeys.ADMIN_ENCRYPTED_PASSWORD))
-        );
-        userRoleDao.addRoleForUser(adminLogin, Role.ADMIN);
-
-        for (String hall : configs.getProperty(ConfigKeys.DEFAULT_HALLS).split(",")) {
-            placeDao.addNewHall(hall);
-        }
-
-        int desksInRoom = Integer.parseInt(configs.getProperty(ConfigKeys.DEFAULT_DESKS_NUM_IN_ROOM));
-        for (String room : configs.getProperty(ConfigKeys.DEFAULT_ROOMS).split(",")) {
-            placeDao.addNewRoom(room);
-            for (int i = 0; i <= desksInRoom; i++) {
-                placeDao.addNewDesk(room);
-            }
+    public static void runMigrations(String url, String user, String pswd, String pathToChangeLog) {
+        try (Connection connection = DriverManager.getConnection(url, user, pswd)) {
+            System.out.println("starting migration");
+            Database database = DatabaseFactory.getInstance()
+                    .findCorrectDatabaseImplementation(new JdbcConnection(connection));
+            Liquibase liquibase =
+                    new Liquibase(pathToChangeLog, new ClassLoaderResourceAccessor(), database);
+            liquibase.update();
+            System.out.println("migration finished successfully");
+        } catch (Exception e) {
+            System.out.println("Got SQL Exception " + e.getMessage());
+            throw new RuntimeException(e);
         }
     }
 }

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd"
+        logicalFilePath="db/changelog.xml">
+    <include file="001_create_schemas.xml" relativeToChangelogFile="true"/>
+    <include file="002_create_user_table.xml" relativeToChangelogFile="true"/>
+    <include file="003_create_password_table.xml" relativeToChangelogFile="true"/>
+    <include file="004_create_place_table.xml" relativeToChangelogFile="true"/>
+    <include file="005_create_desk_table.xml" relativeToChangelogFile="true"/>
+    <include file="006_create_booking_table.xml" relativeToChangelogFile="true"/>
+    <include file="007_create_foreign_key.xml" relativeToChangelogFile="true"/>
+    <include file="008_insert_user_table.xml" relativeToChangelogFile="true"/>
+    <include file="009_insert_password_table.xml" relativeToChangelogFile="true"/>
+    <include file="010_insert_place_table.xml" relativeToChangelogFile="true"/>
+    <include file="011_insert_desk_table.xml" relativeToChangelogFile="true"/>
+</databaseChangeLog>
