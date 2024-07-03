@@ -19,7 +19,7 @@ public class ServicesFactory {
         UserOperations userOperations = new UserOperationsImpl(daoFactory.getPlaceDao(), daoFactory.getBookingDao(), reader, openTime, closeTime);
         AdminOperations adminOperations = new AdminOperationsImpl(daoFactory.getPlaceDao(), daoFactory.getBookingDao(), reader, userOperations);
         this.userOfficeService = new UserOfficeServiceImpl(reader, userOperations);
-        this.adminOfficeService = new AdminOfficeServiceImpl(reader, userOperations, adminOperations);
+        this.adminOfficeService = new AdminOfficeServiceImpl(reader, adminOperations);
     }
 
     public AdminOfficeService getAdminOfficeService() {

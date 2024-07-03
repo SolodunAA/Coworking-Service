@@ -57,5 +57,17 @@ public interface PlaceDao {
      * @return set all halls
      */
     Set<String> getAllHalls();
+    /**
+     * check if place already exists in coworking
+     * @param placeName name of place
+     * @return true if place already exists, false - not
+     */
+    boolean isPlaceExists(String placeName);
+    /**
+     * check if desk already exists in the room
+     * @param roomName name of room
+     * @return true if desk already exists, false - not
+     */
+    boolean isDeskExistsInRoom(String roomName, int deskNumber);
 
 }

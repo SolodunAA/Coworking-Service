@@ -48,13 +48,13 @@ public class UserOperationsImpl implements UserOperations {
         }
         ConsolePrinter.print("Select room");
         String userAnswerRoomName = reader.read();
-        if (!placeDao.getAllRooms().contains(userAnswerRoomName)) {
+        if (!placeDao.isPlaceExists(userAnswerRoomName)) {
             ConsolePrinter.print("There is not room with this name");
             return;
         }
         ConsolePrinter.print("Select desk №");
         int userAnswerDeskNumber = Integer.parseInt(reader.read());
-        if (!placeDao.getSetOfAllDesksInRoom(userAnswerRoomName).contains(userAnswerDeskNumber)) {
+        if (!placeDao.isDeskExistsInRoom(userAnswerRoomName, userAnswerDeskNumber)) {
             ConsolePrinter.print("There is not desk with this number in the room");
             return;
         }
@@ -99,7 +99,7 @@ public class UserOperationsImpl implements UserOperations {
         }
         ConsolePrinter.print("Select hall");
         String userAnswerHallName = reader.read();
-        if (!placeDao.getAllHalls().contains(userAnswerHallName)) {
+        if (!placeDao.isPlaceExists(userAnswerHallName)) {
             ConsolePrinter.print("There is not hall with this name");
             return;
         }
@@ -148,7 +148,7 @@ public class UserOperationsImpl implements UserOperations {
         ConsolePrinter.print("Enter 2 if you want change the time");
         String userAnswerDateOrTime = reader.read();
         String placeType;
-        if(placeDao.getAllRooms().contains(booking.getPlaceName())){
+        if (placeDao.getAllRooms().contains(booking.getPlaceName())) {
             placeType = "room";
         } else {
             placeType = "hall";
@@ -172,7 +172,7 @@ public class UserOperationsImpl implements UserOperations {
                     ConsolePrinter.print("The end time should be between working hours");
                     return;
                 }
-                if(placeType.equals("room")){
+                if (placeType.equals("room")) {
                     Set<LocalTime> availableSlotsForDesk = bookingDao.
                             getAvailableRoomDesksSlotsOnDate(userAnswerDate, booking.getPlaceName()).get(booking.getDeskNumber());
 
@@ -216,9 +216,10 @@ public class UserOperationsImpl implements UserOperations {
                     ConsolePrinter.print("The end time should be between working hours");
                     return;
                 }
-                if(placeType.equals("room")){
-                    Set<LocalTime> availableSlotsForDesk = bookingDao.
-                            getAvailableRoomDesksSlotsOnDate(booking.getDate(), booking.getPlaceName()).get(booking.getDeskNumber());
+                if (placeType.equals("room")) {
+                    Set<LocalTime> availableSlotsForDesk = bookingDao
+                            .getAvailableRoomDesksSlotsOnDate(booking.getDate(), booking.getPlaceName())
+                            .get(booking.getDeskNumber());
 
                     LocalTime currentTime = userAnswerStartTime;
                     while (currentTime.isBefore(userAnswerEndTime)) {
@@ -230,8 +231,9 @@ public class UserOperationsImpl implements UserOperations {
                     }
 
                 } else {
-                    Set<LocalTime> availableSlotsForHall = bookingDao.
-                            getAvailableHallsSlotsOnDate(booking.getDate()).get(booking.getPlaceName());
+                    Set<LocalTime> availableSlotsForHall = bookingDao
+                            .getAvailableHallsSlotsOnDate(booking.getDate())
+                            .get(booking.getPlaceName());
 
                     LocalTime currentTime = userAnswerStartTime;
                     while (currentTime.isBefore(userAnswerEndTime)) {
@@ -243,7 +245,7 @@ public class UserOperationsImpl implements UserOperations {
                     }
 
                 }
-                ConsolePrinter.print(bookingDao.changeBookingDate(userAnswerBookingId, booking.getDate(), userAnswerStartTime, userAnswerEndTime));
+                ConsolePrinter.print(bookingDao.changeBookingTime(userAnswerBookingId, userAnswerStartTime, userAnswerEndTime));
             }
             default -> ConsolePrinter.print("Wrong enter. Try again.");
         }

@@ -129,4 +129,36 @@ public class PostgresPlaceDao implements PlaceDao {
         }
         return set;
     }
+    @Override
+    public boolean isPlaceExists(String placeName) {
+        boolean exists = false;
+        try (Connection connection = DriverManager.getConnection(url, userName, password);
+             PreparedStatement ps = connection.prepareStatement(SQLParams.IS_PLACE_EXISTS)) {
+            ps.setString(1, placeName);
+            ResultSet resultSet = ps.executeQuery();
+            while (resultSet.next()) {
+                exists = resultSet.getBoolean(1);
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        return exists;
+    }
+
+    @Override
+    public boolean isDeskExistsInRoom(String roomName, int deskNumber) {
+        boolean exists = false;
+        try (Connection connection = DriverManager.getConnection(url, userName, password);
+             PreparedStatement ps = connection.prepareStatement(SQLParams.IS_DESK_EXISTS)) {
+            ps.setString(1, roomName);
+            ps.setInt(2, deskNumber);
+            ResultSet resultSet = ps.executeQuery();
+            while (resultSet.next()) {
+                exists = resultSet.getBoolean(1);
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        return exists;
+    }
 }

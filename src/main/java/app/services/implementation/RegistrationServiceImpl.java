@@ -22,17 +22,21 @@ public class RegistrationServiceImpl implements RegistrationService {
 
     @Override
     public void register() {
-        ConsolePrinter.print("Enter login");
-        String login = reader.read();
-        boolean isAlreadyExists = loginDao.checkIfUserExist(login);
-        if (isAlreadyExists) {
-            ConsolePrinter.print("Login already exists");
-        } else {
-            ConsolePrinter.print("Enter password");
-            String password = reader.read();
-            int encodedPswd = passwordEncoder.encode(password);
-            loginDao.addNewUser(login, encodedPswd);
-            ConsolePrinter.print("Successfully register");
+        try {
+            ConsolePrinter.print("Enter login");
+            String login = reader.read();
+            boolean isAlreadyExists = loginDao.checkIfUserExist(login);
+            if (isAlreadyExists) {
+                ConsolePrinter.print("Login already exists");
+            } else {
+                ConsolePrinter.print("Enter password");
+                String password = reader.read();
+                int encodedPswd = passwordEncoder.encode(password);
+                loginDao.addNewUser(login, encodedPswd);
+                ConsolePrinter.print("Successfully register");
+            }
+        } catch (Exception e) {
+            ConsolePrinter.print("Something went wrong, try again");
         }
     }
 }

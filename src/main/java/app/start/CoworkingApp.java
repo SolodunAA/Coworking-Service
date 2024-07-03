@@ -25,7 +25,8 @@ public class CoworkingApp {
         String dbUrl = configs.getProperty(ConfigKeys.DB_URL);
         String dbUser = configs.getProperty(ConfigKeys.DB_USER);
         String dbPassword = configs.getProperty(ConfigKeys.DB_PASSWORD);
-        InitialConfigProvider.runMigrations(dbUrl, dbUser ,dbPassword);
+        String pathToChangeLog = configs.getProperty(ConfigKeys.PATH_CHANGELOG);
+        InitialConfigProvider.runMigrations(dbUrl, dbUser ,dbPassword, pathToChangeLog);
 
         String openTime = configs.getProperty(ConfigKeys.OPEN_TIME);
         String closeTime = configs.getProperty(ConfigKeys.CLOSE_TIME);

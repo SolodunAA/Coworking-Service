@@ -14,8 +14,12 @@ public class SQLParams {
             VALUES ((SELECT user_id FROM admin.user_table WHERE user_login = ?), ?);
             """;
 
-    public static final String CHECK_USER_EXISTS = """
-            SELECT count(*) FROM admin.user_table WHERE user_login = ?
+    public static final String IS_USER_EXISTS = """
+            SELECT EXISTS (
+            SELECT user_login
+            FROM admin.user_table
+            WHERE user_login = ?
+            );
             """;
 
     public static final String SELECT_ENCODED_PASSWORD = """
@@ -116,20 +120,6 @@ public class SQLParams {
             SELECT role FROM admin.user_table
             WHERE user_login = ?
             """;
-    public static final String SELECT_AVAILABLE_DESKS_ON_DATE_TIME = """
-            SELECT place_name, desk_number
-            FROM coworking.desk_table JOIN coworking.place_table USING(place_id)
-            LEFT JOIN coworking.booking_table USING(desk_id)
-            WHERE date IS NULL
-            OR (date = ? AND start_time > ? AND end_time < ?);
-            """;
-    public static final String SELECT_AVAILABLE_HALLS_ON_DATE_TIME = """
-            SELECT place_name
-            FROM coworking.place_table
-            LEFT JOIN coworking.booking_table USING(place_id)
-            WHERE place_type = 'hall' AND (date IS NULL
-            OR (date = ? AND start_time > ? AND end_time < ?));
-            """;
     public static final String SELECT_BOOKING_BY_ID = """
             SELECT booking_id, user_login, place_name, desk_number, date, start_time, end_time
             FROM coworking.booking_table
@@ -149,5 +139,21 @@ public class SQLParams {
             SELECT place_name, start_time, end_time
             FROM coworking.booking_table JOIN coworking.place_table USING(place_id)
             WHERE place_type = 'hall' AND date = ?;
+            """;
+
+    public static final String IS_PLACE_EXISTS = """
+            SELECT EXISTS (
+            SELECT place_name
+            FROM coworking.place_table
+            WHERE place_name = ?
+            );
+            """;
+    public static final String IS_DESK_EXISTS = """
+            SELECT EXISTS (
+            SELECT desk_number
+            FROM coworking.place_table
+            JOIN coworking.desk_table USING(place_id)
+            WHERE place_name = ? AND desk_number = ?
+            );
             """;
 }

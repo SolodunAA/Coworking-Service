@@ -33,11 +33,11 @@ public class PostgresBookingDao implements BookingDao {
         Set<LocalTime> allSlots = new HashSet<>();
         Map<Integer, Set<LocalTime>> availableDeskSlots = new HashMap<>();
         LocalTime currentTime = openTime;
-        while(currentTime.isBefore(closeTime)){
+        while (currentTime.isBefore(closeTime)) {
             allSlots.add(currentTime);
             currentTime = currentTime.plusHours(1);
         }
-        for(int desk: desksInRoom){
+        for (int desk : desksInRoom) {
             availableDeskSlots.put(desk, new HashSet<>(allSlots));
         }
         try (Connection connection = DriverManager.getConnection(url, userName, password);
@@ -50,7 +50,7 @@ public class PostgresBookingDao implements BookingDao {
                 LocalTime startTime = LocalTime.parse(String.valueOf(resultSet.getTime("start_time")));
                 LocalTime endTime = LocalTime.parse(String.valueOf(resultSet.getTime("end_time")));
                 currentTime = startTime;
-                while(currentTime.isBefore(endTime)){
+                while (currentTime.isBefore(endTime)) {
                     availableDeskSlots.get(deskNumber).remove(currentTime);
                     currentTime = currentTime.plusHours(1);
                 }
@@ -68,11 +68,11 @@ public class PostgresBookingDao implements BookingDao {
         Set<LocalTime> allSlots = new HashSet<>();
         Map<String, Set<LocalTime>> availableHallSlots = new HashMap<>();
         LocalTime currentTime = openTime;
-        while(currentTime.isBefore(closeTime)){
+        while (currentTime.isBefore(closeTime)) {
             allSlots.add(currentTime);
             currentTime = currentTime.plusHours(1);
         }
-        for(String hall: allHalls){
+        for (String hall : allHalls) {
             availableHallSlots.put(hall, new HashSet<>(allSlots));
         }
         try (Connection connection = DriverManager.getConnection(url, userName, password);
@@ -85,7 +85,7 @@ public class PostgresBookingDao implements BookingDao {
                 LocalTime endTime = LocalTime.parse(String.valueOf(resultSet.getTime("end_time")));
                 LocalTime currTime = startTime;
                 System.out.println(hallName + " " + startTime + " " + endTime);
-                while(currTime.isBefore(endTime)){
+                while (currTime.isBefore(endTime)) {
                     Set<LocalTime> set = availableHallSlots.get(hallName);
                     set.remove(currTime);
                     currTime = currTime.plusHours(1);

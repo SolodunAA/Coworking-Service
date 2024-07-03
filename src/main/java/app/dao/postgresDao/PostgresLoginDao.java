@@ -22,11 +22,11 @@ public class PostgresLoginDao implements LoginDao {
     @Override
     public boolean checkIfUserExist(String login) {
         try (Connection connection = DriverManager.getConnection(url, userName, password);
-             PreparedStatement ps = connection.prepareStatement(SQLParams.CHECK_USER_EXISTS)) {
+             PreparedStatement ps = connection.prepareStatement(SQLParams.IS_USER_EXISTS)) {
             ps.setString(1, login);
             ResultSet resultSet = ps.executeQuery();
             resultSet.next();
-            return resultSet.getInt(1) > 0;
+            return resultSet.getBoolean(1);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

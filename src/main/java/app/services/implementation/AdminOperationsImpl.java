@@ -30,8 +30,7 @@ public class AdminOperationsImpl implements AdminOperations {
     public void addRoom() {
         ConsolePrinter.print("Enter new room name");
         String adminAnswerRoomName = reader.read();
-        Set<String> allRooms = placeDao.getAllRooms();
-        if (allRooms.contains(adminAnswerRoomName)) {
+        if (placeDao.isPlaceExists(adminAnswerRoomName)) {
             ConsolePrinter.print("This room already exists");
             return;
         }
@@ -42,8 +41,7 @@ public class AdminOperationsImpl implements AdminOperations {
     public void addHall() {
         ConsolePrinter.print("Enter new hall name");
         String adminAnswerHallName = reader.read();
-        Set<String> allHalls = placeDao.getAllHalls();
-        if (!allHalls.contains(adminAnswerHallName)) {
+        if (placeDao.isPlaceExists(adminAnswerHallName)) {
             ConsolePrinter.print("This hall already exists");
             return;
         }
@@ -59,7 +57,7 @@ public class AdminOperationsImpl implements AdminOperations {
         }
         ConsolePrinter.print("Select the room where you want to add a desk");
         String adminAnswerRoom = reader.read();
-        if (!allRooms.contains(adminAnswerRoom)) {
+        if (!placeDao.isPlaceExists(adminAnswerRoom)) {
             ConsolePrinter.print("This room doesn't exist");
             return;
         }
@@ -75,7 +73,7 @@ public class AdminOperationsImpl implements AdminOperations {
         }
         ConsolePrinter.print("Select room name for deleting");
         String adminAnswerRoomName = reader.read();
-        if (!allRooms.contains(adminAnswerRoomName)) {
+        if (!placeDao.isPlaceExists(adminAnswerRoomName)) {
             ConsolePrinter.print("This room doesn't exist");
             return;
         }
@@ -91,7 +89,7 @@ public class AdminOperationsImpl implements AdminOperations {
         }
         ConsolePrinter.print("Select in which room you want to remove the desktop");
         String adminAnswerRoomName = reader.read();
-        if (!allRooms.contains(adminAnswerRoomName)) {
+        if (!placeDao.isPlaceExists(adminAnswerRoomName)) {
             ConsolePrinter.print("This room doesn't exist");
             return;
         }
@@ -103,7 +101,7 @@ public class AdminOperationsImpl implements AdminOperations {
         }
         ConsolePrinter.print("Select the table number you want to delete");
         String adminAnswerDeskNumber = reader.read();
-        if (!allDesksInRoom.contains(Integer.parseInt(adminAnswerDeskNumber))) {
+        if (!placeDao.isDeskExistsInRoom(adminAnswerRoomName, Integer.parseInt(adminAnswerDeskNumber))) {
             ConsolePrinter.print("This desk doesn't exist");
             return;
         }
@@ -120,7 +118,7 @@ public class AdminOperationsImpl implements AdminOperations {
         }
         ConsolePrinter.print("Select hall name for deleting");
         String adminAnswerHallName = reader.read();
-        if (!allHalls.contains(adminAnswerHallName)) {
+        if (!placeDao.isPlaceExists(adminAnswerHallName)) {
             ConsolePrinter.print("This hall doesn't exist");
             return;
         }
