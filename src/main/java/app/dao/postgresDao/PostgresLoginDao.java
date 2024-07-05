@@ -1,7 +1,7 @@
 package app.dao.postgresDao;
 
 import app.dao.LoginDao;
-import app.dto.Role;
+import app.dto.RoleDto;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -63,7 +63,7 @@ public class PostgresLoginDao implements LoginDao {
     }
 
     @Override
-    public Role getUserRole(String login) {
+    public RoleDto getUserRole(String login) {
         try (Connection connection = DriverManager.getConnection(url, userName, password);
              PreparedStatement ps = connection.prepareStatement(SQLParams.SELECT_USER_ROLE)) {
             ps.setString(1, login);
@@ -75,7 +75,7 @@ public class PostgresLoginDao implements LoginDao {
             } else {
                 role = "USER";
             }
-            return Role.valueOf(role);
+            return RoleDto.valueOf(role);
 
         } catch (Exception e) {
             throw new RuntimeException(e);

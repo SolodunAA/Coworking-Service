@@ -1,4 +1,8 @@
 package app.services;
+
+import app.dto.OperationResult;
+import app.dto.UserDto;
+
 /**
  * RegistrationService
  */
@@ -6,5 +10,5 @@ public interface RegistrationService {
     /**
      * main registration method
      */
-    void register();
+    OperationResult register(UserDto userDto);
 }

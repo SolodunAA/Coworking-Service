@@ -3,7 +3,7 @@ package app.dao;
 import app.dao.postgresDao.PostgresBookingDao;
 import app.dao.postgresDao.PostgresLoginDao;
 import app.dao.postgresDao.PostgresPlaceDao;
-import app.dto.Booking;
+import app.dto.BookingDto;
 import liquibase.Liquibase;
 import liquibase.database.Database;
 import liquibase.database.DatabaseFactory;
@@ -20,10 +20,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -86,7 +83,7 @@ public class PostgresBookingDaoTest {
         LocalTime startTime1 = LocalTime.parse("10:00");
         LocalTime endTime1 = LocalTime.parse("21:00");
         int bookingId1 = 1;
-        Booking booking1 = new Booking(bookingId1, userLogin, hallName, 0, date1, startTime1, endTime1);
+        BookingDto bookingDto1 = new BookingDto(bookingId1, userLogin, hallName, 0, date1, startTime1, endTime1);
 
         String roomName = "Red";
         int deskNumber = 1;
@@ -94,15 +91,15 @@ public class PostgresBookingDaoTest {
         LocalTime startTime2 = LocalTime.parse("11:00");
         LocalTime endTime2 = LocalTime.parse("17:00");
         int bookingId2 = 2;
-        Booking booking2 = new Booking(bookingId2, userLogin, roomName, deskNumber, date2, startTime2, endTime2);
+        BookingDto bookingDto2 = new BookingDto(bookingId2, userLogin, roomName, deskNumber, date2, startTime2, endTime2);
 
         loginDao.addNewUser(userLogin, userEncodedPassword);
-        bookingDao.addNewHallBooking(userLogin, hallName, date1, startTime1, endTime1);
-        bookingDao.addNewDeskBooking(userLogin, roomName, deskNumber, date2, startTime2, endTime2);
+        bookingDao.addNewHallBooking(bookingDto1);
+        bookingDao.addNewDeskBooking(bookingDto2);
 
         System.out.println(bookingDao.getAllBookingsForUser(userLogin));
 
-        assertThat(bookingDao.getAllBookingsForUser(userLogin)).containsExactlyInAnyOrder(booking1, booking2);
+        assertThat(bookingDao.getAllBookingsForUser(userLogin)).containsExactlyInAnyOrder(bookingDto1, bookingDto2);
     }
     @Test
     @DisplayName("test method get all bookings for all users")
@@ -114,9 +111,7 @@ public class PostgresBookingDaoTest {
         LocalTime startTime1 = LocalTime.parse("15:00");
         LocalTime endTime1 = LocalTime.parse("21:00");
         int bookingId1 = 1;
-        Booking booking1 = new Booking(bookingId1, userLogin1, hallName, 0, date1, startTime1, endTime1);
-        Set<Booking> setBookings1 = new HashSet<>();
-        setBookings1.add(booking1);
+        BookingDto bookingDto1 = new BookingDto(bookingId1, userLogin1, hallName, 0, date1, startTime1, endTime1);
 
         String roomName = "Red";
         String userLogin2 = "user2";
@@ -126,20 +121,18 @@ public class PostgresBookingDaoTest {
         LocalTime startTime2 = LocalTime.parse("10:00");
         LocalTime endTime2 = LocalTime.parse("21:00");
         int bookingId2 = 2;
-        Booking booking2 = new Booking(bookingId2, userLogin2, roomName, deskNumber, date2, startTime2, endTime2);
-        Set<Booking> setBookings2 = new HashSet<>();
-        setBookings2.add(booking2);
+        BookingDto bookingDto2 = new BookingDto(bookingId2, userLogin2, roomName, deskNumber, date2, startTime2, endTime2);
 
-        Map<String, Set<Booking>> allBookingsForAllUsers = new HashMap<>();
-        allBookingsForAllUsers.put(userLogin1, setBookings1);
-        allBookingsForAllUsers.put(userLogin2, setBookings2);
+        List<BookingDto> allBookingsForAllUsers = new ArrayList<>();
+        allBookingsForAllUsers.add(bookingDto1);
+        allBookingsForAllUsers.add(bookingDto2);
 
         loginDao.addNewUser(userLogin1, userEncodedPassword1);
         loginDao.addNewUser(userLogin2, userEncodedPassword2);
-        bookingDao.addNewHallBooking(userLogin1, hallName, date1, startTime1, endTime1);
-        bookingDao.addNewDeskBooking(userLogin2, roomName, deskNumber, date2, startTime2, endTime2);
+        bookingDao.addNewHallBooking(bookingDto1);
+        bookingDao.addNewDeskBooking(bookingDto2);
 
-        assertThat(bookingDao.getAllBookingsAllUsers()).containsAllEntriesOf(allBookingsForAllUsers);
+        assertThat(bookingDao.getAllBookingsAllUsers()).containsAll(allBookingsForAllUsers);
     }
     @Test
     @DisplayName("get booking knowing it id")
@@ -151,14 +144,14 @@ public class PostgresBookingDaoTest {
         LocalTime startTime = LocalTime.parse("10:00");
         LocalTime endTime = LocalTime.parse("21:00");
         int bookingId = 1;
-        Booking booking = new Booking(bookingId, userLogin, hallName, 0, date, startTime, endTime);
+        BookingDto bookingDto = new BookingDto(bookingId, userLogin, hallName, 0, date, startTime, endTime);
 
         loginDao.addNewUser(userLogin, userEncodedPassword);
-        bookingDao.addNewHallBooking(userLogin, hallName, date, startTime, endTime);
-        System.out.println(booking);
+        bookingDao.addNewHallBooking(bookingDto);
+        System.out.println(bookingDto);
         System.out.println(bookingDao.getBookingById(bookingId));
 
-        assertThat(bookingDao.getBookingById(bookingId)).isEqualTo(booking);
+        assertThat(bookingDao.getBookingById(bookingId)).isEqualTo(bookingDto);
     }
     @Test
     @DisplayName("check to add new hall booking")
@@ -172,7 +165,7 @@ public class PostgresBookingDaoTest {
 
         loginDao.addNewUser(userLogin, userEncodedPassword);
 
-        assertThat(bookingDao.addNewHallBooking(userLogin, hallName, date, startTime, endTime)).
+        assertThat(bookingDao.addNewHallBooking(new BookingDto(0, userLogin, hallName, 0, date, startTime, endTime))).
                 isEqualTo("Booking added successfully");
 
     }
@@ -189,7 +182,7 @@ public class PostgresBookingDaoTest {
 
         loginDao.addNewUser(userLogin, userEncodedPassword);
 
-        assertThat(bookingDao.addNewDeskBooking(userLogin, roomName, deskNumber, date, startTime, endTime)).
+        assertThat(bookingDao.addNewDeskBooking(new BookingDto(0, userLogin, roomName, 0, date, startTime, endTime))).
                 isEqualTo("Booking added successfully");
 
     }
@@ -206,28 +199,9 @@ public class PostgresBookingDaoTest {
         int bookingId = 1;
 
         loginDao.addNewUser(userLogin, userEncodedPassword);
-        bookingDao.addNewHallBooking(userLogin, hallName, date, startTime, endTime);
+        bookingDao.addNewHallBooking(new BookingDto(0, userLogin, hallName, 0, date, startTime, endTime));
 
         assertThat(bookingDao.deleteBooking(bookingId)).isEqualTo("Deleted successfully");
-    }
-    @Test
-    @DisplayName("test method changing booking time")
-    public void changeBookingTimeTest(){
-        String hallName = "Paris";
-        String userLogin = "user";
-        int userEncodedPassword = 12345;
-        LocalDate date = LocalDate.parse("2024-06-28");
-        LocalTime startTime = LocalTime.parse("10:00");
-        LocalTime endTime = LocalTime.parse("21:00");
-        LocalTime newStartTime = LocalTime.parse("09:00");
-        LocalTime newEndTime = LocalTime.parse("17:00");
-        int bookingId = 1;
-
-        loginDao.addNewUser(userLogin, userEncodedPassword);
-        bookingDao.addNewHallBooking(userLogin, hallName, date, startTime, endTime);
-
-        assertThat(bookingDao.changeBookingTime(bookingId, newStartTime, newEndTime)).
-                isEqualTo("Changed successfully");
     }
     @Test
     @DisplayName("test method changing booking time")
@@ -242,9 +216,9 @@ public class PostgresBookingDaoTest {
         int bookingId = 1;
 
         loginDao.addNewUser(userLogin, userEncodedPassword);
-        bookingDao.addNewHallBooking(userLogin, hallName, date, startTime, endTime);
+        bookingDao.addNewHallBooking(new BookingDto(0, userLogin, hallName, 0, date, startTime, endTime));
 
-        assertThat(bookingDao.changeBookingDate(bookingId, newDate, startTime, endTime)).
+        assertThat(bookingDao.changeBookingDateAndTime(bookingId, newDate, startTime, endTime)).
                 isEqualTo("Changed successfully");
     }
 
@@ -290,8 +264,8 @@ public class PostgresBookingDaoTest {
 
         loginDao.addNewUser(userLogin1, userEncodedPassword1);
         loginDao.addNewUser(userLogin2, userEncodedPassword2);
-        bookingDao.addNewHallBooking(userLogin1, hallName, date, startTime1, endTime1);
-        bookingDao.addNewHallBooking(userLogin2, hallName, date, startTime2, endTime2);
+        bookingDao.addNewHallBooking(new BookingDto(0, userLogin1, hallName, 0, date, startTime1, endTime1));
+        bookingDao.addNewHallBooking(new BookingDto(0, userLogin2, hallName, 0, date, startTime2, endTime2));
 
         assertThat(bookingDao.getAvailableHallsSlotsOnDate(date)).isEqualTo(availableHallSlots);
     }
@@ -341,8 +315,8 @@ public class PostgresBookingDaoTest {
 
         loginDao.addNewUser(userLogin1, userEncodedPassword1);
         loginDao.addNewUser(userLogin2, userEncodedPassword2);
-        bookingDao.addNewDeskBooking(userLogin1, roomName, deskNumber1, date, startTime1, endTime1);
-        bookingDao.addNewDeskBooking(userLogin2, roomName, deskNumber2, date, startTime2, endTime2);
+        bookingDao.addNewDeskBooking((new BookingDto(0, userLogin1, roomName, 0, date, startTime1, endTime1)));
+        bookingDao.addNewDeskBooking((new BookingDto(0, userLogin1, roomName, 0, date, startTime1, endTime1)));
 
         assertThat(bookingDao.getAvailableRoomDesksSlotsOnDate(date, roomName)).isEqualTo(availableDeskSlots);
     }

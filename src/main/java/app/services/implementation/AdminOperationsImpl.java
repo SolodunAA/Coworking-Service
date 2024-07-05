@@ -2,155 +2,77 @@ package app.services.implementation;
 
 import app.dao.BookingDao;
 import app.dao.PlaceDao;
-import app.dto.Booking;
-import app.in.Reader;
-import app.out.ConsolePrinter;
+import app.dto.BookingDto;
+import app.dto.OperationResult;
 import app.services.AdminOperations;
-import app.services.UserOperations;
-
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.List;
 
 public class AdminOperationsImpl implements AdminOperations {
     private final PlaceDao placeDao;
     private final BookingDao bookingDao;
-    private final Reader reader;
-    private final UserOperations userOperations;
 
-    public AdminOperationsImpl(PlaceDao placeDao, BookingDao bookingDao, Reader reader, UserOperations userOperations) {
+    public AdminOperationsImpl(PlaceDao placeDao, BookingDao bookingDao) {
         this.placeDao = placeDao;
         this.bookingDao = bookingDao;
-        this.reader = reader;
-        this.userOperations = userOperations;
     }
 
     @Override
-    public void addRoom() {
-        ConsolePrinter.print("Enter new room name");
-        String adminAnswerRoomName = reader.read();
-        if (placeDao.isPlaceExists(adminAnswerRoomName)) {
-            ConsolePrinter.print("This room already exists");
-            return;
+    public OperationResult addRoom(String roomName) {
+        if (placeDao.isPlaceExists(roomName)) {
+            return new OperationResult("Room already exists", 400);
         }
-        ConsolePrinter.print(placeDao.addNewPlace(adminAnswerRoomName, "room"));
+        return new OperationResult(placeDao.addNewPlace(roomName, "room"), 200);
     }
 
     @Override
-    public void addHall() {
-        ConsolePrinter.print("Enter new hall name");
-        String adminAnswerHallName = reader.read();
-        if (placeDao.isPlaceExists(adminAnswerHallName)) {
-            ConsolePrinter.print("This hall already exists");
-            return;
+    public OperationResult addHall(String hallName) {
+        if (placeDao.isPlaceExists(hallName)) {
+            return new OperationResult("Hall already exists", 400);
         }
-        ConsolePrinter.print(placeDao.addNewPlace(adminAnswerHallName, "hall"));
+        return new OperationResult(placeDao.addNewPlace(hallName, "hall"), 200);
     }
 
     @Override
-    public void addDesk() {
-        ConsolePrinter.print("There are following rooms: ");
-        Set<String> allRooms = placeDao.getAllRooms();
-        for (String room : allRooms) {
-            ConsolePrinter.print(room);
+    public OperationResult addDesk(String roomName) {
+        if (!placeDao.isPlaceExists(roomName)) {
+            return new OperationResult("This room doesn't exist", 404);
         }
-        ConsolePrinter.print("Select the room where you want to add a desk");
-        String adminAnswerRoom = reader.read();
-        if (!placeDao.isPlaceExists(adminAnswerRoom)) {
-            ConsolePrinter.print("This room doesn't exist");
-            return;
-        }
-        ConsolePrinter.print(placeDao.addNewDesk(adminAnswerRoom));
+        return new OperationResult(placeDao.addNewDesk(roomName), 200);
     }
 
     @Override
-    public void deleteRoom() {
-        ConsolePrinter.print("There are following rooms: ");
-        Set<String> allRooms = placeDao.getAllRooms();
-        for (String room : allRooms) {
-            ConsolePrinter.print(room);
+    public OperationResult deleteRoom(String roomName) {
+        if (!placeDao.isPlaceExists(roomName)) {
+            return new OperationResult("This room doesn't exist", 404);
         }
-        ConsolePrinter.print("Select room name for deleting");
-        String adminAnswerRoomName = reader.read();
-        if (!placeDao.isPlaceExists(adminAnswerRoomName)) {
-            ConsolePrinter.print("This room doesn't exist");
-            return;
+        return new OperationResult(placeDao.deletePlace(roomName), 200);
+    }
+    @Override
+    public OperationResult deleteHall(String hallName) {
+        if (!placeDao.isPlaceExists(hallName)) {
+            return new OperationResult("This hall doesn't exist", 404);
         }
-        ConsolePrinter.print(placeDao.deletePlace(adminAnswerRoomName));
+        return new OperationResult(placeDao.deletePlace(hallName), 200);
     }
 
     @Override
-    public void deleteDesk() {
-        ConsolePrinter.print("There are following rooms: ");
-        Set<String> allRooms = placeDao.getAllRooms();
-        for (String room : allRooms) {
-            ConsolePrinter.print(room);
+    public OperationResult deleteDesk(String roomName, int deskNumber) {
+        if (!placeDao.isPlaceExists(roomName)) {
+            return new OperationResult("This room doesn't exist", 404);
         }
-        ConsolePrinter.print("Select in which room you want to remove the desktop");
-        String adminAnswerRoomName = reader.read();
-        if (!placeDao.isPlaceExists(adminAnswerRoomName)) {
-            ConsolePrinter.print("This room doesn't exist");
-            return;
+        if (!placeDao.isDeskExistsInRoom(roomName, deskNumber)) {
+            return new OperationResult("This desk doesn't exist", 404);
         }
-
-        ConsolePrinter.print("There are following desks: ");
-        Set<Integer> allDesksInRoom = placeDao.getSetOfAllDesksInRoom(adminAnswerRoomName);
-        for (int desk : allDesksInRoom) {
-            ConsolePrinter.print("Desk № " + desk);
-        }
-        ConsolePrinter.print("Select the table number you want to delete");
-        String adminAnswerDeskNumber = reader.read();
-        if (!placeDao.isDeskExistsInRoom(adminAnswerRoomName, Integer.parseInt(adminAnswerDeskNumber))) {
-            ConsolePrinter.print("This desk doesn't exist");
-            return;
-        }
-
-        ConsolePrinter.print(placeDao.deleteDesk(Integer.parseInt(adminAnswerDeskNumber), adminAnswerRoomName));
+        return new OperationResult(placeDao.deleteDesk(deskNumber, roomName), 200);
     }
 
     @Override
-    public void deleteHall() {
-        ConsolePrinter.print("There are following hall: ");
-        Set<String> allHalls = placeDao.getAllHalls();
-        for (String hall : allHalls) {
-            ConsolePrinter.print(hall);
-        }
-        ConsolePrinter.print("Select hall name for deleting");
-        String adminAnswerHallName = reader.read();
-        if (!placeDao.isPlaceExists(adminAnswerHallName)) {
-            ConsolePrinter.print("This hall doesn't exist");
-            return;
-        }
-        ConsolePrinter.print(placeDao.deletePlace(adminAnswerHallName));
+    public List<BookingDto> getAllBookings() {
+        return bookingDao.getAllBookingsAllUsers();
     }
 
     @Override
-    public void viewAllBookings() {
-        ConsolePrinter.print("Select sort by: 1-by date, 2-by user, 3-place name");
-        int comparatorId = Integer.parseInt(reader.read());
-        Comparator<Booking> bookingComparator;
-        switch (comparatorId) {
-            case (1) -> bookingComparator = Comparator.comparing(Booking::getDate);
-            case (2) -> bookingComparator = Comparator.comparing(Booking::getUserLogin);
-            case (3) -> bookingComparator = Comparator.comparing(Booking::getPlaceName);
-            default -> {
-                ConsolePrinter.print("invalid sorting id");
-                return;
-            }
-        }
-        var sortedBookings = bookingDao.getAllBookingsAllUsers().values().stream()
-                .flatMap(Collection::stream)
-                .sorted(bookingComparator)
-                .collect(Collectors.toList());
-        ConsolePrinter.print("sorted bookings: " + sortedBookings);
+    public List<BookingDto> getAllBookingsForUser(String login) {
+        return bookingDao.getAllBookingsForUser(login);
     }
-
-    @Override
-    public void viewAllBookingsForUser() {
-        ConsolePrinter.print("Enter user login");
-        String adminAnswerLogin = reader.read();
-        userOperations.getAllUserBooking(adminAnswerLogin);
-    }
-
 }

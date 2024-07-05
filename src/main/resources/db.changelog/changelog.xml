@@ -11,9 +11,10 @@
     <include file="004_create_place_table.xml" relativeToChangelogFile="true"/>
     <include file="005_create_desk_table.xml" relativeToChangelogFile="true"/>
     <include file="006_create_booking_table.xml" relativeToChangelogFile="true"/>
-    <include file="007_create_foreign_key.xml" relativeToChangelogFile="true"/>
-    <include file="008_insert_user_table.xml" relativeToChangelogFile="true"/>
-    <include file="009_insert_password_table.xml" relativeToChangelogFile="true"/>
-    <include file="010_insert_place_table.xml" relativeToChangelogFile="true"/>
-    <include file="011_insert_desk_table.xml" relativeToChangelogFile="true"/>
+    <include file="007_create_audit_table.xml" relativeToChangelogFile="true"/>
+    <include file="008_create_foreign_key.xml" relativeToChangelogFile="true"/>
+    <include file="009_insert_user_table.xml" relativeToChangelogFile="true"/>
+    <include file="010_insert_password_table.xml" relativeToChangelogFile="true"/>
+    <include file="011_insert_place_table.xml" relativeToChangelogFile="true"/>
+    <include file="012_insert_desk_table.xml" relativeToChangelogFile="true"/>
 </databaseChangeLog>

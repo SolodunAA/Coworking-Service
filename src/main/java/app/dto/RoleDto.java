@@ -1,6 +1,6 @@
 package app.dto;
 
-public enum Role {
+public enum RoleDto {
     ADMIN,
     USER
 }

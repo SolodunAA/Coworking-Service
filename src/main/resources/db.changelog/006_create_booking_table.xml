@@ -9,7 +9,7 @@
         <createSequence sequenceName="booking_id_seq" schemaName="coworking"
                         minValue="1"
                         dataType="BIGINT"/>
-        <createTable tableName="booking_table" schemaName="coworking" remarks="table with all bookings in coworking">
+        <createTable tableName="booking_table" schemaName="coworking" remarks="table with all bookingDtos in coworking">
             <column name="booking_id" type="BIGINT" defaultValueComputed="nextval('coworking.booking_id_seq')" remarks="unique id">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
@@ -21,13 +21,13 @@
             </column>
             <column name="desk_id" type="BIGINT" remarks="booked desk id, FK from desk_table">
             </column>
-            <column name="date" type="DATE" remarks="date of booking">
+            <column name="date" type="DATE" remarks="date of bookingDto">
                 <constraints nullable="false"/>
             </column>
-            <column name="start_time" type="TIME" remarks="start time of booking">
+            <column name="start_time" type="TIME" remarks="start time of bookingDto">
                 <constraints nullable="false"/>
             </column>
-            <column name="end_time" type="TIME" remarks="end time of booking">
+            <column name="end_time" type="TIME" remarks="end time of bookingDto">
                 <constraints nullable="false"/>
             </column>
 

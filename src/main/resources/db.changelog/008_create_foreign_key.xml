@@ -5,7 +5,7 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd"
         logicalFilePath="db/changelog.xml">
-    <changeSet id="007_create_foreign_key.xml" author="Solodun">
+    <changeSet id="008_create_foreign_key.xml" author="Solodun">
 
         <addForeignKeyConstraint baseTableName="password_table"
                                  baseColumnNames="user_id"

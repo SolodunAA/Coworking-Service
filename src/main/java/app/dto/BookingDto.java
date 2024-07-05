@@ -4,16 +4,16 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Objects;
 
-public class Booking {
-    private final int bookingID;
-    private final String userLogin;
-    private final String placeName;
-    private final int deskNumber;
-    private final LocalDate date;
-    private final LocalTime startTime;
-    private final LocalTime endTime;
+public class BookingDto {
+    private int bookingID;
+    private String userLogin;
+    private String placeName;
+    private int deskNumber;
+    private LocalDate date;
+    private LocalTime startTime;
+    private LocalTime endTime;
 
-    public Booking(int bookingID, String userLogin, String placeName, int deskNumber, LocalDate date, LocalTime startTime, LocalTime endTime) {
+    public BookingDto(int bookingID, String userLogin, String placeName, int deskNumber, LocalDate date, LocalTime startTime, LocalTime endTime) {
         this.bookingID = bookingID;
         this.userLogin = userLogin;
         this.placeName = placeName;
@@ -21,6 +21,8 @@ public class Booking {
         this.date = date;
         this.startTime = startTime;
         this.endTime = endTime;
+    }
+    public BookingDto() {
     }
 
     public String getUserLogin() {
@@ -56,8 +58,8 @@ public class Booking {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Booking booking = (Booking) o;
-        return bookingID == booking.bookingID && Objects.equals(userLogin, booking.userLogin) && Objects.equals(placeName, booking.placeName) && Objects.equals(deskNumber, booking.deskNumber) && Objects.equals(date, booking.date) && Objects.equals(startTime, booking.startTime) && Objects.equals(endTime, booking.endTime);
+        BookingDto bookingDto = (BookingDto) o;
+        return bookingID == bookingDto.bookingID && Objects.equals(userLogin, bookingDto.userLogin) && Objects.equals(placeName, bookingDto.placeName) && Objects.equals(deskNumber, bookingDto.deskNumber) && Objects.equals(date, bookingDto.date) && Objects.equals(startTime, bookingDto.startTime) && Objects.equals(endTime, bookingDto.endTime);
     }
 
     @Override
@@ -76,5 +78,33 @@ public class Booking {
                 ", startTime=" + startTime +
                 ", endTime=" + endTime +
                 '}';
+    }
+
+    public void setBookingID(int bookingID) {
+        this.bookingID = bookingID;
+    }
+
+    public void setUserLogin(String userLogin) {
+        this.userLogin = userLogin;
+    }
+
+    public void setPlaceName(String placeName) {
+        this.placeName = placeName;
+    }
+
+    public void setDeskNumber(int deskNumber) {
+        this.deskNumber = deskNumber;
+    }
+
+    public void setDate(LocalDate date) {
+        this.date = date;
+    }
+
+    public void setStartTime(LocalTime startTime) {
+        this.startTime = startTime;
+    }
+
+    public void setEndTime(LocalTime endTime) {
+        this.endTime = endTime;
     }
 }

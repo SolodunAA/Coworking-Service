@@ -2,41 +2,33 @@ package app.services.implementation;
 
 import app.auxiliaryfunctions.PasswordEncoder;
 import app.dao.LoginDao;
-import app.dto.Role;
-import app.in.Reader;
-import app.out.ConsolePrinter;
+import app.dto.OperationResult;
+import app.dto.UserDto;
 import app.services.RegistrationService;
 
 public class RegistrationServiceImpl implements RegistrationService {
     private final PasswordEncoder passwordEncoder;
     private final LoginDao loginDao;
-    private final Reader reader;
 
     public RegistrationServiceImpl(PasswordEncoder passwordEncoder,
-                                   LoginDao loginDAO,
-                                   Reader reader) {
+                                   LoginDao loginDAO) {
         this.passwordEncoder = passwordEncoder;
         this.loginDao = loginDAO;
-        this.reader = reader;
     }
 
     @Override
-    public void register() {
+    public OperationResult register(UserDto userDto) {
         try {
-            ConsolePrinter.print("Enter login");
-            String login = reader.read();
-            boolean isAlreadyExists = loginDao.checkIfUserExist(login);
+            boolean isAlreadyExists = loginDao.checkIfUserExist(userDto.getLogin());
             if (isAlreadyExists) {
-                ConsolePrinter.print("Login already exists");
+                return new OperationResult("Wrong login or password", 404);
             } else {
-                ConsolePrinter.print("Enter password");
-                String password = reader.read();
-                int encodedPswd = passwordEncoder.encode(password);
-                loginDao.addNewUser(login, encodedPswd);
-                ConsolePrinter.print("Successfully register");
+                int encodedPswd = passwordEncoder.encode(userDto.getPassword());
+                loginDao.addNewUser(userDto.getLogin(), encodedPswd);
+                return new OperationResult("Successfully register", 200);
             }
         } catch (Exception e) {
-            ConsolePrinter.print("Something went wrong, try again");
+            return new OperationResult("Something went wrong, try again", 500);
         }
     }
 }

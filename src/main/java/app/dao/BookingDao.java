@@ -1,9 +1,10 @@
 package app.dao;
 
-import app.dto.Booking;
+import app.dto.BookingDto;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -24,26 +25,17 @@ public interface BookingDao {
 
     /**
      * add new hall booking
-     * @param userLogin user's login
-     * @param hallName hall name
-     * @param date booking date
-     * @param startTime booking start time
-     * @param endTime booking end time
+     * @param bookingDto booking dto
      * @return status
      */
-    String addNewHallBooking(String userLogin, String hallName, LocalDate date, LocalTime startTime, LocalTime endTime);
+    String addNewHallBooking(BookingDto bookingDto);
 
     /**
      * add new desk booking
-     * @param userLogin user's login
-     * @param roomName room name
-     * @param deskNumber desktop number
-     * @param date booking date
-     * @param startTime booking start time
-     * @param endTime booking end time
+     * @param bookingDto booking dto
      * @return status
      */
-    String addNewDeskBooking(String userLogin, String roomName, int deskNumber, LocalDate date, LocalTime startTime, LocalTime endTime);
+    String addNewDeskBooking(BookingDto bookingDto);
 
     /**
      * delete place booking
@@ -55,24 +47,15 @@ public interface BookingDao {
     /**
      * show all user bookings
      * @param userLogin login of user
-     * @return set of user bookings
+     * @return list of user bookings
      */
-    Set<Booking> getAllBookingsForUser(String userLogin);
+    List<BookingDto> getAllBookingsForUser(String userLogin);
 
     /**
      * show all bookings for all users
-     * @return map: key is user's logins, value - set of their bookings
+     * @return list of all bookings
      */
-    Map<String, Set<Booking>> getAllBookingsAllUsers();
-
-    /**
-     * change booking time
-     * @param bookingId booking id for changing
-     * @param startTime new start booking time
-     * @param endTime new end booking time
-     * @return status
-     */
-    String changeBookingTime(int bookingId, LocalTime startTime, LocalTime endTime);
+    List<BookingDto> getAllBookingsAllUsers();
 
     /**
      * change date time
@@ -82,13 +65,20 @@ public interface BookingDao {
      * @param endTime new end time of booking
      * @return status
      */
-    String changeBookingDate(int bookingId, LocalDate date, LocalTime startTime, LocalTime endTime);
+    String changeBookingDateAndTime(int bookingId, LocalDate date, LocalTime startTime, LocalTime endTime);
 
     /**
      * get booking by id
      * @param bookingId id booking
      * @return Booking with this id
      */
-    Booking getBookingById(int bookingId);
+    BookingDto getBookingById(int bookingId);
+    /**
+     * get booking by id
+     * @param login user login
+     * @param bookingId id booking
+     * @return Booking with this id
+     */
+    boolean isUserHaveBookingWithId(String login, int bookingId);
 
 }

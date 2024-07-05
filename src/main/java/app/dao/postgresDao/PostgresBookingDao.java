@@ -2,7 +2,7 @@ package app.dao.postgresDao;
 
 import app.dao.BookingDao;
 import app.dao.PlaceDao;
-import app.dto.Booking;
+import app.dto.BookingDto;
 
 import java.sql.*;
 import java.sql.Date;
@@ -99,14 +99,14 @@ public class PostgresBookingDao implements BookingDao {
     }
 
     @Override
-    public String addNewHallBooking(String userLogin, String hallName, LocalDate date, LocalTime startTime, LocalTime endTime) {
+    public String addNewHallBooking(BookingDto bookingDto) {
         try (Connection connection = DriverManager.getConnection(url, userName, password);
              PreparedStatement ps = connection.prepareStatement(SQLParams.INSERT_HALL_BOOKING)) {
-            ps.setString(1, userLogin);
-            ps.setString(2, hallName);
-            ps.setDate(3, Date.valueOf(date));
-            ps.setTime(4, Time.valueOf(startTime));
-            ps.setTime(5, Time.valueOf(endTime));
+            ps.setString(1, bookingDto.getUserLogin());
+            ps.setString(2, bookingDto.getPlaceName());
+            ps.setDate(3, Date.valueOf(bookingDto.getDate()));
+            ps.setTime(4, Time.valueOf(bookingDto.getStartTime()));
+            ps.setTime(5, Time.valueOf(bookingDto.getEndTime()));
             ps.executeUpdate();
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -115,16 +115,16 @@ public class PostgresBookingDao implements BookingDao {
     }
 
     @Override
-    public String addNewDeskBooking(String userLogin, String roomName, int deskNumber, LocalDate date, LocalTime startTime, LocalTime endTime) {
+    public String addNewDeskBooking(BookingDto bookingDto) {
         try (Connection connection = DriverManager.getConnection(url, userName, password);
              PreparedStatement ps = connection.prepareStatement(SQLParams.INSERT_DESK_BOOKING)) {
-            ps.setString(1, userLogin);
-            ps.setString(2, roomName);
-            ps.setString(3, roomName);
-            ps.setInt(4, deskNumber);
-            ps.setDate(5, Date.valueOf(date));
-            ps.setTime(6, Time.valueOf(startTime));
-            ps.setTime(7, Time.valueOf(endTime));
+            ps.setString(1, bookingDto.getUserLogin());
+            ps.setString(2, bookingDto.getPlaceName());
+            ps.setString(3, bookingDto.getPlaceName());
+            ps.setInt(4, bookingDto.getDeskNumber());
+            ps.setDate(5, Date.valueOf(bookingDto.getDate()));
+            ps.setTime(6, Time.valueOf(bookingDto.getStartTime()));
+            ps.setTime(7, Time.valueOf(bookingDto.getEndTime()));
             ps.executeUpdate();
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -145,8 +145,8 @@ public class PostgresBookingDao implements BookingDao {
     }
 
     @Override
-    public Set<Booking> getAllBookingsForUser(String userLogin) {
-        Set<Booking> userBookings = new HashSet<>();
+    public List<BookingDto> getAllBookingsForUser(String userLogin) {
+        List<BookingDto> userBookingDtos = new ArrayList<>();
         try (Connection connection = DriverManager.getConnection(url, userName, password);
              PreparedStatement ps = connection.prepareStatement(SQLParams.SELECT_USER_BOOKINGS)) {
             ps.setString(1, userLogin);
@@ -158,41 +158,40 @@ public class PostgresBookingDao implements BookingDao {
                 LocalDate date = resultSet.getDate("date").toLocalDate();
                 LocalTime startTime = resultSet.getTime("start_time").toLocalTime();
                 LocalTime endTime = resultSet.getTime("end_time").toLocalTime();
-                Booking booking = new Booking(bookingID, userLogin, placeName, deskNumber, date, startTime, endTime);
-                userBookings.add(booking);
+                BookingDto bookingDto = new BookingDto(bookingID, userLogin, placeName, deskNumber, date, startTime, endTime);
+                userBookingDtos.add(bookingDto);
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        return userBookings;
+        return userBookingDtos;
     }
 
     @Override
-    public Map<String, Set<Booking>> getAllBookingsAllUsers() {
-        Map<String, Set<Booking>> allUserBookings = new HashMap<>();
-        Set<String> allUserLogins = getUsersWhoHaveBookings();
-        for (String user : allUserLogins) {
-            allUserBookings.put(user, getAllBookingsForUser(user));
-        }
-        return allUserBookings;
-    }
-
-    @Override
-    public String changeBookingTime(int bookingId, LocalTime startTime, LocalTime endTime) {
+    public List<BookingDto> getAllBookingsAllUsers() {
+        List<BookingDto> userBookingDtos = new ArrayList<>();
         try (Connection connection = DriverManager.getConnection(url, userName, password);
-             PreparedStatement ps = connection.prepareStatement(SQLParams.UPDATE_BOOKING_TIME)) {
-            ps.setTime(1, Time.valueOf(startTime));
-            ps.setTime(2, Time.valueOf(endTime));
-            ps.setInt(3, bookingId);
-            ps.executeUpdate();
+             PreparedStatement ps = connection.prepareStatement(SQLParams.SELECT_ALL_BOOKINGS)) {
+            ResultSet resultSet = ps.executeQuery();
+            while (resultSet.next()) {
+                int bookingID = resultSet.getInt("booking_id");
+                String userLogin = resultSet.getString("user_login");
+                String placeName = resultSet.getString("place_name");
+                int deskNumber = resultSet.getInt("desk_number");
+                LocalDate date = resultSet.getDate("date").toLocalDate();
+                LocalTime startTime = resultSet.getTime("start_time").toLocalTime();
+                LocalTime endTime = resultSet.getTime("end_time").toLocalTime();
+                BookingDto bookingDto = new BookingDto(bookingID, userLogin, placeName, deskNumber, date, startTime, endTime);
+                userBookingDtos.add(bookingDto);
+            }
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        return "Changed successfully";
+        return userBookingDtos;
     }
 
     @Override
-    public String changeBookingDate(int bookingId, LocalDate date, LocalTime startTime, LocalTime endTime) {
+    public String changeBookingDateAndTime(int bookingId, LocalDate date, LocalTime startTime, LocalTime endTime) {
         try (Connection connection = DriverManager.getConnection(url, userName, password);
              PreparedStatement ps = connection.prepareStatement(SQLParams.UPDATE_BOOKING_DATE)) {
             ps.setDate(1, Date.valueOf(date));
@@ -207,8 +206,8 @@ public class PostgresBookingDao implements BookingDao {
     }
 
     @Override
-    public Booking getBookingById(int bookingId) {
-        Booking booking = null;
+    public BookingDto getBookingById(int bookingId) {
+        BookingDto bookingDto = null;
         try (Connection connection = DriverManager.getConnection(url, userName, password);
              PreparedStatement ps = connection.prepareStatement(SQLParams.SELECT_BOOKING_BY_ID)) {
             ps.setInt(1, bookingId);
@@ -221,13 +220,13 @@ public class PostgresBookingDao implements BookingDao {
                 LocalDate date = resultSet.getDate("date").toLocalDate();
                 LocalTime startTime = resultSet.getTime("start_time").toLocalTime();
                 LocalTime endTime = resultSet.getTime("end_time").toLocalTime();
-                booking = new Booking(bookingID, userLogin, placeName, deskNumber, date, startTime, endTime);
+                bookingDto = new BookingDto(bookingID, userLogin, placeName, deskNumber, date, startTime, endTime);
             }
 
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        return booking;
+        return bookingDto;
     }
 
     private Set<String> getUsersWhoHaveBookings() {
@@ -243,5 +242,22 @@ public class PostgresBookingDao implements BookingDao {
             throw new RuntimeException(e);
         }
         return allLogins;
+    }
+
+    @Override
+    public boolean isUserHaveBookingWithId(String login, int bookingId) {
+        boolean exists = false;
+        try (Connection connection = DriverManager.getConnection(url, userName, password);
+             PreparedStatement ps = connection.prepareStatement(SQLParams.IS_USER_HAVE_BOOKING_ID)) {
+            ps.setString(1, login);
+            ps.setInt(2, bookingId);
+            ResultSet resultSet = ps.executeQuery();
+            while (resultSet.next()) {
+                exists = resultSet.getBoolean(1);
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        return exists;
     }
 }

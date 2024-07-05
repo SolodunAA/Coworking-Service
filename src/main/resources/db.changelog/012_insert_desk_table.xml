@@ -5,7 +5,7 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd"
         logicalFilePath="db/changelog.xml">
-    <changeSet id="011_insert_desk_table.xml" author="Solodun">
+    <changeSet id="012_insert_desk_table.xml" author="Solodun">
         <insert tableName="desk_table" schemaName="coworking">
             <column name="desk_id" valueSequenceNext="desk_id_seq"/>
             <column name="desk_number" value="1"/>
