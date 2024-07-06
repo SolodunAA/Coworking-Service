@@ -8,10 +8,7 @@ import liquibase.database.Database;
 import liquibase.database.DatabaseFactory;
 import liquibase.database.jvm.JdbcConnection;
 import liquibase.resource.ClassLoaderResourceAccessor;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.*;
 import org.testcontainers.containers.PostgreSQLContainer;
 
 import java.sql.Connection;
@@ -29,7 +26,7 @@ public class PostgresAuditDaoTest {
             "postgres:15-alpine"
     );
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeAll() {
         postgres.start();
         runMigrations();
@@ -50,12 +47,12 @@ public class PostgresAuditDaoTest {
         }
     }
 
-    @AfterClass
+    @AfterAll
     public static void afterAll() {
         postgres.stop();
     }
 
-    @Before
+    @AfterEach
     public void clearDb() {
         try (Connection connection = DriverManager.getConnection(postgres.getJdbcUrl(), postgres.getUsername(), postgres.getPassword());
              var st = connection.createStatement()) {

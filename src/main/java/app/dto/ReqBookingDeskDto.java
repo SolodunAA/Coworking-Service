@@ -4,7 +4,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 
 public class ReqBookingDeskDto {
-    private String roomName;
+    private String placeName;
     private int deskNumber;
     private LocalDate date;
     private LocalTime startTime;
@@ -14,8 +14,8 @@ public class ReqBookingDeskDto {
 
     }
 
-    public String getRoomName() {
-        return roomName;
+    public String getPlaceName() {
+        return placeName;
     }
 
     public int getDeskNumber() {
@@ -34,8 +34,8 @@ public class ReqBookingDeskDto {
         return endTime;
     }
 
-    public void setRoomName(String roomName) {
-        this.roomName = roomName;
+    public void setPlaceName(String placeName) {
+        this.placeName = placeName;
     }
 
     public void setDeskNumber(int deskNumber) {

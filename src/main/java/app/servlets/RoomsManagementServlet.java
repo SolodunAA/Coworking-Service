@@ -5,12 +5,13 @@ import app.annotations.Exceptionable;
 import app.annotations.Loggable;
 import app.dao.LoginDao;
 import app.dto.OperationResult;
-import app.dto.ReqPlaceDto;
 import app.dto.RoleDto;
 import app.services.AdminOperations;
 import app.services.UserOperations;
 import app.start.CoworkingApp;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -46,13 +47,6 @@ public class RoomsManagementServlet extends HttpServlet {
 
         if (loginDao.checkIfUserExist(login)) {
 
-            StringBuilder buffer = new StringBuilder();
-            BufferedReader reader = req.getReader();
-            String line;
-            while ((line = reader.readLine()) != null) {
-                buffer.append(line);
-            }
-
             Map<String, Set<Integer>> allRooms = userOperations.getAllRoomsAndDesks();
             String json = objectMapper.writeValueAsString(allRooms);
             resp.setStatus(200);
@@ -84,10 +78,10 @@ public class RoomsManagementServlet extends HttpServlet {
                 buffer.append(line);
             }
 
-            String requestBody = buffer.toString();
-            ReqPlaceDto reqRoomName = objectMapper.readValue(requestBody, ReqPlaceDto.class);
+            JsonObject jsonObject = JsonParser.parseString(buffer.toString()).getAsJsonObject();
+            String reqRoomName = jsonObject.get("placeName").getAsString();
 
-            OperationResult operationResult = adminOperations.deleteRoom(reqRoomName.getPlaceName());
+            OperationResult operationResult = adminOperations.deleteRoom(reqRoomName);
 
             resp.setStatus(operationResult.getErrCode());
             resp.setContentType("application/json");
@@ -119,10 +113,10 @@ public class RoomsManagementServlet extends HttpServlet {
                 buffer.append(line);
             }
 
-            String requestBody = buffer.toString();
-            ReqPlaceDto reqRoomName = objectMapper.readValue(requestBody, ReqPlaceDto.class);
+            JsonObject jsonObject = JsonParser.parseString(buffer.toString()).getAsJsonObject();
+            String reqRoomName = jsonObject.get("placeName").getAsString();
 
-            OperationResult operationResult = adminOperations.addRoom(reqRoomName.getPlaceName());
+            OperationResult operationResult = adminOperations.addRoom(reqRoomName);
 
             resp.setStatus(operationResult.getErrCode());
             resp.setContentType("application/json");

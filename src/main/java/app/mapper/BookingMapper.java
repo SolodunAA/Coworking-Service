@@ -12,8 +12,6 @@ import org.mapstruct.factory.Mappers;
 public interface BookingMapper {
     BookingMapper INSTANCE = Mappers.getMapper(BookingMapper.class);
 
-    @Mapping(target = "userLogin", ignore = true)
-    @Mapping(target = "deskNumber", ignore = true)
     ReqBookingHallDto bookingDtoToBookingHallDto(BookingDto bookingDto);
     BookingDto bookingHallDtoToBookingDto(ReqBookingHallDto reqBookingHallDto);
     default BookingDto addLoginAndDeskToBookingHallDTO(ReqBookingHallDto reqBookingHallDto, String login) {
@@ -22,7 +20,7 @@ public interface BookingMapper {
         bookingDto.setDeskNumber(0);
         return bookingDto;
     }
-    @Mapping(target = "userLogin", ignore = true)
+    //@Mapping(target = "userLogin", ignore = true)
     ReqBookingDeskDto bookingDtoToBookingDeskDto(BookingDto bookingDto);
     BookingDto bookingDeskDtoToBookingDto(ReqBookingDeskDto reqBookingDeskDto);
     default BookingDto addLoginToBookingDeskDTO(ReqBookingDeskDto reqBookingDeskDto, String login) {
@@ -30,6 +28,6 @@ public interface BookingMapper {
         bookingDto.setUserLogin(login);
         return bookingDto;
     }
-    @Mapping(target = "userLogin", ignore = true)
+    //@Mapping(target = "userLogin", ignore = true)
     RespBookingDto bookingDtoToRespBookingDto(BookingDto bookingDto);
 }

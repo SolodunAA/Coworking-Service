@@ -6,11 +6,12 @@ import app.annotations.Loggable;
 import app.dao.LoginDao;
 import app.dto.OperationResult;
 import app.dto.ReqDeskDto;
-import app.dto.ReqPlaceDto;
 import app.dto.RoleDto;
 import app.services.AdminOperations;
 import app.start.CoworkingApp;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -86,10 +87,10 @@ public class DesksManagementServlet extends HttpServlet {
                 buffer.append(line);
             }
 
-            String requestBody = buffer.toString();
-            ReqPlaceDto reqRoomName = objectMapper.readValue(requestBody, ReqPlaceDto.class);
+            JsonObject jsonObject = JsonParser.parseString(buffer.toString()).getAsJsonObject();
+            String reqRoomName = jsonObject.get("placeName").getAsString();
 
-            OperationResult operationResult = adminOperations.addDesk(reqRoomName.getPlaceName());
+            OperationResult operationResult = adminOperations.addDesk(reqRoomName);
 
             resp.setStatus(operationResult.getErrCode());
             resp.setContentType("application/json");

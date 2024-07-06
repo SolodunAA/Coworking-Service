@@ -5,7 +5,6 @@ import app.annotations.Exceptionable;
 import app.annotations.Loggable;
 import app.dao.LoginDao;
 import app.dto.BookingDto;
-import app.dto.ReqAvailableHallDto;
 import app.dto.OperationResult;
 import app.dto.ReqBookingHallDto;
 import app.mapper.BookingMapper;
@@ -13,6 +12,8 @@ import app.services.UserOperations;
 import app.start.CoworkingApp;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JSR310Module;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -20,6 +21,7 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Map;
 import java.util.Set;
@@ -47,7 +49,6 @@ public class BookHallServlet extends HttpServlet {
         String login = (String) req.getSession().getAttribute("login");
 
         if (loginDao.checkIfUserExist(login)) {
-
             StringBuilder buffer = new StringBuilder();
             BufferedReader reader = req.getReader();
             String line;
@@ -67,7 +68,6 @@ public class BookHallServlet extends HttpServlet {
             resp.getOutputStream().write(res.getBytes());
 
         } else {
-
             resp.setStatus(HttpServletResponse.SC_FORBIDDEN);
             resp.setContentType("application/json");
             String res = "You are not logged in to the booking system";
@@ -91,11 +91,10 @@ public class BookHallServlet extends HttpServlet {
             while ((line = reader.readLine()) != null) {
                 buffer.append(line);
             }
+            JsonObject jsonObject = JsonParser.parseString(buffer.toString()).getAsJsonObject();
+            LocalDate date = LocalDate.parse(jsonObject.get("date").getAsString());
 
-            String requestBody = buffer.toString();
-            ReqAvailableHallDto reqAvailableHallDto = objectMapper.readValue(requestBody, ReqAvailableHallDto.class);
-
-            Map<String, Set<LocalTime>> availableSlots = userOperations.getAllAvailableHallSlotsOnDate(reqAvailableHallDto.getLocalDate());
+            Map<String, Set<LocalTime>> availableSlots = userOperations.getAllAvailableHallSlotsOnDate(date);
             String json = objectMapper.writeValueAsString(availableSlots);
             resp.setStatus(200);
             resp.setContentType("application/json");

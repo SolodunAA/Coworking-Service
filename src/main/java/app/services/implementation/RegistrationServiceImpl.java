@@ -18,17 +18,13 @@ public class RegistrationServiceImpl implements RegistrationService {
 
     @Override
     public OperationResult register(UserDto userDto) {
-        try {
-            boolean isAlreadyExists = loginDao.checkIfUserExist(userDto.getLogin());
-            if (isAlreadyExists) {
-                return new OperationResult("Wrong login or password", 404);
-            } else {
-                int encodedPswd = passwordEncoder.encode(userDto.getPassword());
-                loginDao.addNewUser(userDto.getLogin(), encodedPswd);
-                return new OperationResult("Successfully register", 200);
-            }
-        } catch (Exception e) {
-            return new OperationResult("Something went wrong, try again", 500);
+        boolean isAlreadyExists = loginDao.checkIfUserExist(userDto.getLogin());
+        if (isAlreadyExists) {
+            return new OperationResult("Wrong login or password", 404);
+        } else {
+            int encodedPswd = passwordEncoder.encode(userDto.getPassword());
+            loginDao.addNewUser(userDto.getLogin(), encodedPswd);
+            return new OperationResult("Successfully register", 200);
         }
     }
 }

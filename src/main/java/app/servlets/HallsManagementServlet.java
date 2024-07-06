@@ -5,12 +5,13 @@ import app.annotations.Exceptionable;
 import app.annotations.Loggable;
 import app.dao.LoginDao;
 import app.dto.OperationResult;
-import app.dto.ReqPlaceDto;
 import app.dto.RoleDto;
 import app.services.AdminOperations;
 import app.services.UserOperations;
 import app.start.CoworkingApp;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -44,14 +45,6 @@ public class HallsManagementServlet extends HttpServlet {
         String login = (String) req.getSession().getAttribute("login");
 
         if (loginDao.checkIfUserExist(login)) {
-
-            StringBuilder buffer = new StringBuilder();
-            BufferedReader reader = req.getReader();
-            String line;
-            while ((line = reader.readLine()) != null) {
-                buffer.append(line);
-            }
-
             Set<String> allHalls = userOperations.getAllHalls();
             String json = objectMapper.writeValueAsString(allHalls);
             resp.setStatus(200);
@@ -82,10 +75,10 @@ public class HallsManagementServlet extends HttpServlet {
                 buffer.append(line);
             }
 
-            String requestBody = buffer.toString();
-            ReqPlaceDto reqHallName = objectMapper.readValue(requestBody, ReqPlaceDto.class);
+            JsonObject jsonObject = JsonParser.parseString(buffer.toString()).getAsJsonObject();
+            String reqHallName = jsonObject.get("placeName").getAsString();
 
-            OperationResult operationResult = adminOperations.deleteHall(reqHallName.getPlaceName());
+            OperationResult operationResult = adminOperations.deleteHall(reqHallName);
 
             resp.setStatus(operationResult.getErrCode());
             resp.setContentType("application/json");
@@ -95,7 +88,7 @@ public class HallsManagementServlet extends HttpServlet {
         } else {
             resp.setStatus(HttpServletResponse.SC_FORBIDDEN);
             resp.setContentType("application/json");
-            String res = "You are not logged in to the booking system";
+            String res = "No access";
             resp.getOutputStream().write(res.getBytes());
         }
     }
@@ -116,10 +109,10 @@ public class HallsManagementServlet extends HttpServlet {
                 buffer.append(line);
             }
 
-            String requestBody = buffer.toString();
-            ReqPlaceDto reqHallName = objectMapper.readValue(requestBody, ReqPlaceDto.class);
+            JsonObject jsonObject = JsonParser.parseString(buffer.toString()).getAsJsonObject();
+            String reqHallName = jsonObject.get("placeName").getAsString();
 
-            OperationResult operationResult = adminOperations.addHall(reqHallName.getPlaceName());
+            OperationResult operationResult = adminOperations.addHall(reqHallName);
 
             resp.setStatus(operationResult.getErrCode());
             resp.setContentType("application/json");
@@ -129,7 +122,7 @@ public class HallsManagementServlet extends HttpServlet {
         } else {
             resp.setStatus(HttpServletResponse.SC_FORBIDDEN);
             resp.setContentType("application/json");
-            String res = "You are not logged in to the booking system";
+            String res = "No access";
             resp.getOutputStream().write(res.getBytes());
         }
     }

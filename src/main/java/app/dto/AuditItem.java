@@ -1,10 +1,6 @@
 package app.dto;
 
-import java.time.Instant;
-import java.time.LocalDateTime;
 import java.util.Objects;
-
-import static java.time.ZoneOffset.UTC;
 
 public class AuditItem {
     private final String user;

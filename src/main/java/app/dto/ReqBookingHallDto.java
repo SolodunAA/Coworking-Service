@@ -4,7 +4,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 
 public class ReqBookingHallDto {
-    private String hallName;
+    private String placeName;
     private LocalDate date;
     private LocalTime startTime;
     private LocalTime endTime;
@@ -13,8 +13,8 @@ public class ReqBookingHallDto {
 
     }
 
-    public String getHallName() {
-        return hallName;
+    public String getPlaceName() {
+        return placeName;
     }
 
     public LocalDate getDate() {
@@ -29,14 +29,11 @@ public class ReqBookingHallDto {
         return endTime;
     }
 
-    public void setHallName(String hallName) {
-        this.hallName = hallName;
+    public void setPlaceName(String hallName) {
+        this.placeName = hallName;
     }
 
     public void setDate(LocalDate date) {
-        if (date.isBefore(LocalDate.now()) || date.isAfter(LocalDate.now().plusYears(1))) {
-            throw new IllegalArgumentException("date should be between today and today + 1y");
-        }
         this.date = date;
     }
 

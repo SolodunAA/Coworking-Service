@@ -19,22 +19,18 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public OperationResult auth(UserDto userDto) {
-        try {
-            boolean isUserExists = loginDao.checkIfUserExist(userDto.getLogin());
-            if (isUserExists) {
-                int encodedPswd = passwordEncoder.encode(userDto.getPassword());
-                int savedEncodedPswd = loginDao.getEncodedPassword(userDto.getLogin());
-                if (encodedPswd == savedEncodedPswd) {
-                    return new OperationResult("Login Successful", 200);
-                } else {
-                    return new OperationResult("Wrong login or password", 404);
-                }
-
+        boolean isUserExists = loginDao.checkIfUserExist(userDto.getLogin());
+        if (isUserExists) {
+            int encodedPswd = passwordEncoder.encode(userDto.getPassword());
+            int savedEncodedPswd = loginDao.getEncodedPassword(userDto.getLogin());
+            if (encodedPswd == savedEncodedPswd) {
+                return new OperationResult("Login Successful", 200);
             } else {
                 return new OperationResult("Wrong login or password", 404);
             }
-        } catch (Exception e) {
-            return new OperationResult("Something went wrong, try again", 500);
+
+        } else {
+            return new OperationResult("Wrong login or password", 404);
         }
     }
 }

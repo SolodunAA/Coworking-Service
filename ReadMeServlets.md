@@ -32,7 +32,7 @@
 6. Desk reservation
    POST: http://localhost:8080/Coworking-Service-1.0/bookingDto/bookDesk
    {
-   "roomName": "Red",
+   "placeName": "Red",
    "deskNumber": 2,
    "date": "2024-01-01",
    "startTime": "10:00:00",

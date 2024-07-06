@@ -1,8 +1,6 @@
 package app.config;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.UncheckedIOException;
+import java.io.*;
 import java.util.Properties;
 
 /**
@@ -13,7 +11,9 @@ public class ConfigReader {
      * the name of the config file
      */
 
-    private static final String CONFIG_FILE_NAME = "app_conf.conf";
+    private static final String CONFIG_FILE_PATH = "src/main/resources/app_conf.conf";
+    public static final String TEST_CONFIG_PATH = "src/test/resources/test_conf.conf";
+
 
     /**
      * method read properties from configuration file
@@ -21,7 +21,14 @@ public class ConfigReader {
      */
     public Properties readProperties() {
         Properties properties = new Properties();
-        try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream(CONFIG_FILE_NAME)) {
+        File testConfigFile = new File(TEST_CONFIG_PATH);
+        File configFileToUse = testConfigFile.exists()
+                ? testConfigFile
+                : new File(CONFIG_FILE_PATH);
+        if (!configFileToUse.exists()) {
+            throw new IllegalStateException("config file not found");
+        }
+        try (InputStream inputStream = new FileInputStream(configFileToUse)) {
             properties.load(inputStream);
         } catch (IOException e) {
             throw new UncheckedIOException(e);

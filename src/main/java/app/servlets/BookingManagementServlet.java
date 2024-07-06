@@ -10,6 +10,8 @@ import app.services.UserOperations;
 import app.start.CoworkingApp;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JSR310Module;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -91,9 +93,9 @@ public class BookingManagementServlet extends HttpServlet {
                 buffer.append(line);
             }
 
-            String requestBody = buffer.toString();
-            ReqIdBookingDto reqDeleteBookingDto = objectMapper.readValue(requestBody, ReqIdBookingDto.class);
-            OperationResult operationResult = userOperations.deleteBookings(login, reqDeleteBookingDto.getBookingId());
+            JsonObject jsonObject = JsonParser.parseString(buffer.toString()).getAsJsonObject();
+            int bookingId = jsonObject.get("bookingId").getAsInt();
+            OperationResult operationResult = userOperations.deleteBookings(login, bookingId);
 
             resp.setStatus(operationResult.getErrCode());
             resp.setContentType("application/json");

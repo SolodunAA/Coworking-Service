@@ -43,7 +43,6 @@ public class RegistrationServlet extends HttpServlet {
 
         String requestBody = buffer.toString();
         UserDto userDto = objectMapper.readValue(requestBody, UserDto.class);
-
         OperationResult operationResult = registrationService.register(userDto);
         resp.setStatus(operationResult.getErrCode());
         resp.setContentType("application/json");

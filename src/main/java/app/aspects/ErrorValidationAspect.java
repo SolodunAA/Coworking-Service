@@ -1,13 +1,7 @@
 package app.aspects;
 
-import app.dao.AuditDao;
-import app.dto.AuditItem;
-import app.start.CoworkingApp;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 import org.aspectj.lang.ProceedingJoinPoint;
-import org.aspectj.lang.Signature;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
@@ -20,13 +14,15 @@ public class ErrorValidationAspect {
     @Around("annotatedByExceptionable()")
     public Object errorChecking(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
         try {
-            return proceedingJoinPoint.proceed();
+            Object res = proceedingJoinPoint.proceed();
+            return res;
         } catch (Throwable e) {
             HttpServletResponse response = (HttpServletResponse) proceedingJoinPoint.getArgs()[1];
             response.setStatus(500);
             response.setContentType("application/json");
-            String res = "Something went wrong. Try again";
+            String res = "Total error";
             response.getOutputStream().write(res.getBytes());
+            System.out.println("Method " + proceedingJoinPoint.getSignature() + " has exception " + e.getMessage());
         }
         return null;
     }

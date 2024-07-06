@@ -27,12 +27,12 @@ public class UserOperationsImpl implements UserOperations {
     public OperationResult bookDesk(BookingDto bookingDto) {
         if ((bookingDto.getStartTime().isBefore(openTime)
                 || bookingDto.getStartTime().equals(openTime))
-                && bookingDto.getStartTime().isAfter(closeTime)) {
+                || bookingDto.getStartTime().isAfter(closeTime)) {
             return new OperationResult("The booking start time does not coincide with working hours", 400);
         }
 
         if (bookingDto.getEndTime().isBefore(openTime)
-                && (bookingDto.getEndTime().isAfter(closeTime)
+                || (bookingDto.getEndTime().isAfter(closeTime)
                 || bookingDto.getEndTime().equals(closeTime))) {
             return new OperationResult("The booking end time does not coincide with working hours", 400);
         }
@@ -62,12 +62,12 @@ public class UserOperationsImpl implements UserOperations {
     public OperationResult bookHall(BookingDto bookingDto) {
         if ((bookingDto.getStartTime().isBefore(openTime)
                 || bookingDto.getStartTime().equals(openTime))
-                && bookingDto.getStartTime().isAfter(closeTime)) {
+                || bookingDto.getStartTime().isAfter(closeTime)) {
             return new OperationResult("The booking start time does not coincide with working hours", 400);
         }
 
         if (bookingDto.getEndTime().isBefore(openTime)
-                && (bookingDto.getEndTime().isAfter(closeTime)
+                || (bookingDto.getEndTime().isAfter(closeTime)
                 || bookingDto.getEndTime().equals(closeTime))) {
             return new OperationResult("The booking end time does not coincide with working hours", 400);
         }
@@ -108,11 +108,11 @@ public class UserOperationsImpl implements UserOperations {
         } else {
             placeType = "hall";
         }
-        if ((startTime.isBefore(openTime) || startTime.equals(openTime)) && startTime.isAfter(closeTime)) {
+        if ((startTime.isBefore(openTime) || startTime.equals(openTime)) || startTime.isAfter(closeTime)) {
             return new OperationResult("The booking start time does not coincide with working hours", 400);
         }
 
-        if (endTime.isBefore(openTime) && (endTime.isAfter(closeTime) || endTime.equals(closeTime))) {
+        if (endTime.isBefore(openTime) || (endTime.isAfter(closeTime) || endTime.equals(closeTime))) {
             return new OperationResult("The booking end time does not coincide with working hours", 400);
         }
         if (placeType.equals("room")) {

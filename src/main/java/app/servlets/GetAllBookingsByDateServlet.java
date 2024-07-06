@@ -42,13 +42,6 @@ public class GetAllBookingsByDateServlet extends HttpServlet {
 
         if (loginDao.checkIfUserExist(login) && loginDao.getUserRole(login).equals(RoleDto.ADMIN)) {
 
-            StringBuilder buffer = new StringBuilder();
-            BufferedReader reader = req.getReader();
-            String line;
-            while ((line = reader.readLine()) != null) {
-                buffer.append(line);
-            }
-
             List<BookingDto> bookingDtos = adminOperations.getAllBookings();
             String json = objectMapper.writeValueAsString(bookingDtos);
             resp.setStatus(200);
@@ -58,7 +51,7 @@ public class GetAllBookingsByDateServlet extends HttpServlet {
         } else {
             resp.setStatus(HttpServletResponse.SC_FORBIDDEN);
             resp.setContentType("application/json");
-            String res = "You are not logged in to the booking system";
+            String res = "No access";
             resp.getOutputStream().write(res.getBytes());
         }
     }
