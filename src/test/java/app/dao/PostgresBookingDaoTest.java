@@ -311,8 +311,8 @@ public class PostgresBookingDaoTest {
 
         loginDao.addNewUser(userLogin1, userEncodedPassword1);
         loginDao.addNewUser(userLogin2, userEncodedPassword2);
-        bookingDao.addNewDeskBooking((new BookingDto(0, userLogin1, roomName, 0, date, startTime1, endTime1)));
-        bookingDao.addNewDeskBooking((new BookingDto(0, userLogin1, roomName, 0, date, startTime1, endTime1)));
+        bookingDao.addNewDeskBooking((new BookingDto(0, userLogin1, roomName, deskNumber1, date, startTime1, endTime1)));
+        bookingDao.addNewDeskBooking((new BookingDto(0, userLogin2, roomName, deskNumber2, date, startTime2, endTime2)));
 
         assertThat(bookingDao.getAvailableRoomDesksSlotsOnDate(date, roomName)).isEqualTo(availableDeskSlots);
     }

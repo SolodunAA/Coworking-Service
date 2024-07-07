@@ -1,67 +1,21 @@
 package app.servlets;
 
-import app.config.ConfigReader;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.DisplayName;
-import org.testcontainers.containers.PostgreSQLContainer;
+import org.junit.jupiter.api.parallel.Isolated;
 
 import java.io.*;
 import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.verify;
 
-public class AuthenticationServletTest {
-    static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>(
-            "postgres:15-alpine"
-    );
-
-    @BeforeAll
-    public static void beforeAll() {
-        postgres.start();
-        var url = postgres.getJdbcUrl();
-        var pswd = postgres.getPassword();
-        var user = postgres.getUsername();
-        var conf = """
-                db_url = <URL>
-                db_password = <PSWD>
-                db_user = <USER>
-                                
-                admin_login = admin
-                admin_encrypted_password = 92668751
-                default_rooms = red,blue,green
-                default_desks_in_room = 5
-                default_halls = Moscow,Manama
-                open_time = 08:00
-                close_time = 22:00
-                changelog_path = db.changelog/changelog.xml
-                """
-                .replace("<URL>", url)
-                .replace("<PSWD>", pswd)
-                .replace("<USER>", user);
-        try (var fw = new FileWriter(ConfigReader.TEST_CONFIG_PATH)) {
-            fw.write(conf);
-            fw.flush();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
-    }
-
-    @AfterAll
-    public static void clear() {
-        File testConfigFile = new File(ConfigReader.TEST_CONFIG_PATH);
-        if (testConfigFile.exists()) {
-            testConfigFile.delete();
-        }
-    }
-
+@Isolated
+public class AuthenticationServletTest extends BaseServletTest {
     HttpServletRequest request = mock(HttpServletRequest.class);
     HttpServletResponse response = mock(HttpServletResponse.class);
     AuthenticationServlet authenticationServlet = new AuthenticationServlet();

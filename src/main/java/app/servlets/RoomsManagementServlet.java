@@ -91,7 +91,7 @@ public class RoomsManagementServlet extends HttpServlet {
         } else {
             resp.setStatus(HttpServletResponse.SC_FORBIDDEN);
             resp.setContentType("application/json");
-            String res = "You are not logged in to the booking system";
+            String res = "No access";
             resp.getOutputStream().write(res.getBytes());
         }
     }
@@ -126,7 +126,7 @@ public class RoomsManagementServlet extends HttpServlet {
         } else {
             resp.setStatus(HttpServletResponse.SC_FORBIDDEN);
             resp.setContentType("application/json");
-            String res = "You are not logged in to the booking system";
+            String res = "No access";
             resp.getOutputStream().write(res.getBytes());
         }
     }

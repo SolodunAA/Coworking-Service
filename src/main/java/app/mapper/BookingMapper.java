@@ -14,20 +14,22 @@ public interface BookingMapper {
 
     ReqBookingHallDto bookingDtoToBookingHallDto(BookingDto bookingDto);
     BookingDto bookingHallDtoToBookingDto(ReqBookingHallDto reqBookingHallDto);
+
     default BookingDto addLoginAndDeskToBookingHallDTO(ReqBookingHallDto reqBookingHallDto, String login) {
         BookingDto bookingDto = bookingHallDtoToBookingDto(reqBookingHallDto);
         bookingDto.setUserLogin(login);
         bookingDto.setDeskNumber(0);
         return bookingDto;
     }
-    //@Mapping(target = "userLogin", ignore = true)
     ReqBookingDeskDto bookingDtoToBookingDeskDto(BookingDto bookingDto);
+
     BookingDto bookingDeskDtoToBookingDto(ReqBookingDeskDto reqBookingDeskDto);
+
     default BookingDto addLoginToBookingDeskDTO(ReqBookingDeskDto reqBookingDeskDto, String login) {
         BookingDto bookingDto = bookingDeskDtoToBookingDto(reqBookingDeskDto);
         bookingDto.setUserLogin(login);
         return bookingDto;
     }
-    //@Mapping(target = "userLogin", ignore = true)
+
     RespBookingDto bookingDtoToRespBookingDto(BookingDto bookingDto);
 }
