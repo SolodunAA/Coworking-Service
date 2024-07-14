@@ -1,6 +1,8 @@
 package app.dao.postgresDao;
 
+import app.config.YmlReader;
 import app.dao.PlaceDao;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -13,12 +15,24 @@ public class PostgresPlaceDao implements PlaceDao {
     private final String url;
     private final String userName;
     private final String password;
-
+    @Autowired
+    public PostgresPlaceDao(YmlReader ymlReader) {
+        this.url = ymlReader.getUrl();
+        this.userName = ymlReader.getUsername();
+        this.password = ymlReader.getPassword();
+    }
+    /**
+     * constructor for testing
+     * @param url
+     * @param userName
+     * @param password
+     */
     public PostgresPlaceDao(String url, String userName, String password) {
         this.url = url;
         this.userName = userName;
         this.password = password;
     }
+
 
     @Override
     public String addNewPlace(String placeName, String placeType) {

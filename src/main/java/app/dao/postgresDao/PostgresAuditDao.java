@@ -1,7 +1,9 @@
 package app.dao.postgresDao;
 
+import app.config.YmlReader;
 import app.dao.AuditDao;
 import app.dto.AuditItem;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -11,13 +13,23 @@ public class PostgresAuditDao implements AuditDao {
     private final String url;
     private final String userName;
     private final String password;
-
+    @Autowired
+    public PostgresAuditDao(YmlReader ymlReader) {
+        this.url = ymlReader.getUrl();
+        this.userName = ymlReader.getUsername();
+        this.password = ymlReader.getPassword();
+    }
+    /**
+     * constructor for testing
+     * @param url
+     * @param userName
+     * @param password
+     */
     public PostgresAuditDao(String url, String userName, String password) {
         this.url = url;
         this.userName = userName;
         this.password = password;
     }
-
 
     @Override
     public void addAuditItem(AuditItem auditItem) {

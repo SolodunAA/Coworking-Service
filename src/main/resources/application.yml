@@ -1,0 +1,10 @@
+app:
+  datasource:
+    url: jdbc:postgresql://localhost:5433/coworkingDB
+    password: 1111
+    user: coworking_user
+  changelog:
+    path: db.changelog/changelog.xml
+  parameters:
+    open_time: "08:00:00"
+    close_time: "22:00:00"

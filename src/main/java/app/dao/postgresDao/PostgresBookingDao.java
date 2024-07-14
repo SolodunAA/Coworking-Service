@@ -1,8 +1,10 @@
 package app.dao.postgresDao;
 
+import app.config.YmlReader;
 import app.dao.BookingDao;
 import app.dao.PlaceDao;
 import app.dto.BookingDto;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.sql.*;
 import java.sql.Date;
@@ -17,7 +19,25 @@ public class PostgresBookingDao implements BookingDao {
     private final PlaceDao placeDao;
     private final LocalTime openTime;
     private final LocalTime closeTime;
+    @Autowired
+    public PostgresBookingDao(YmlReader ymlReader, PlaceDao placeDao) {
+        this.url = ymlReader.getUrl();
+        this.userName = ymlReader.getUsername();
+        this.password = ymlReader.getPassword();
+        this.placeDao = placeDao;
+        this.openTime = LocalTime.parse(ymlReader.getOpenTime());
+        this.closeTime = LocalTime.parse(ymlReader.getCloseTime());
+    }
 
+    /**
+     * constructor for testing
+     * @param url
+     * @param userName
+     * @param password
+     * @param placeDao
+     * @param openTine
+     * @param closeTime
+     */
     public PostgresBookingDao(String url, String userName, String password, PlaceDao placeDao, LocalTime openTine, LocalTime closeTime) {
         this.url = url;
         this.userName = userName;

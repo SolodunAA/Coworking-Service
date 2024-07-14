@@ -1,6 +1,5 @@
 package app.dao;
 
-
 import app.dao.postgresDao.PostgresAuditDao;
 import app.dto.AuditItem;
 import liquibase.Liquibase;
