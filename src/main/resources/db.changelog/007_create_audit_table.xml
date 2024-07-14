@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd"
+        logicalFilePath="db/changelog.xml">
+    <changeSet id="007_create_audit_table.xml" author="Solodun">
+        <createSequence sequenceName="audit_id_seq" schemaName="admin"
+                        minValue="1"
+                        dataType="BIGINT"/>
+        <createTable tableName="audit_table" schemaName="admin" remarks="user actions audit">
+            <column name="audit_id" type="BIGINT" defaultValueComputed="nextval('admin.audit_id_seq')">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="login" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="time" type="BIGINT" remarks="timestamp of action"/>
+            <column name="action" type="VARCHAR(255)" remarks="action name"/>
+        </createTable>
+    </changeSet>
+</databaseChangeLog>

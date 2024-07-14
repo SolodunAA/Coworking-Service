@@ -156,4 +156,37 @@ public class SQLParams {
             WHERE place_name = ? AND desk_number = ?
             );
             """;
+
+    public static final String SELECT_ALL_BOOKINGS = """
+            SELECT *
+            FROM coworking.booking_table
+            JOIN admin.user_table USING(user_id)
+            JOIN coworking.place_table USING(place_id)
+            LEFT JOIN coworking.desk_table USING(desk_id)
+            ORDER BY date;
+            """;
+
+    public static final String IS_USER_HAVE_BOOKING_ID = """
+            SELECT EXISTS (
+            SELECT booking_id
+            FROM coworking.booking_table
+            JOIN admin.user_table USING (user_id)
+            WHERE user_login = ? AND booking_id = ?
+            );
+            """;
+    public static final String INSERT_AUDIT_ITEM_SQL = """
+            INSERT INTO admin.audit_table
+            (login, time, action)
+            VALUES
+            (?, ?, ?);
+            """;
+
+    public static final String GET_AUDIT_RECORDS_SQL = """
+            SELECT login, time, action
+            FROM admin.audit_table
+            LIMIT ?
+            """;
+    public static final String AUDIT_TABLE_SIZE = """
+            SELECT COUNT(*) FROM admin.audit_table;
+            """;
 }

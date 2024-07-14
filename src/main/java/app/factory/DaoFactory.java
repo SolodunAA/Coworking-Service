@@ -1,8 +1,10 @@
 package app.factory;
 
+import app.dao.AuditDao;
 import app.dao.BookingDao;
 import app.dao.LoginDao;
 import app.dao.PlaceDao;
+import app.dao.postgresDao.PostgresAuditDao;
 import app.dao.postgresDao.PostgresBookingDao;
 import app.dao.postgresDao.PostgresLoginDao;
 import app.dao.postgresDao.PostgresPlaceDao;
@@ -13,10 +15,12 @@ public class DaoFactory {
     private final BookingDao bookingDao;
     private final LoginDao loginDao;
     private final PlaceDao placeDao;
+    private final AuditDao auditDao;
 
     public DaoFactory(String url, String user, String pswd, LocalTime openTime, LocalTime closeTime) {
         this.loginDao = new PostgresLoginDao(url, user, pswd);
         this.placeDao = new PostgresPlaceDao(url, user, pswd);
+        this.auditDao = new PostgresAuditDao(url, user, pswd);
         this.bookingDao = new PostgresBookingDao(url, user, pswd, placeDao, openTime, closeTime);
 
     }
@@ -32,5 +36,10 @@ public class DaoFactory {
     public PlaceDao getPlaceDao() {
         return placeDao;
     }
+    public AuditDao getAuditDao() {
+        return auditDao;
+    }
+
+
 
 }

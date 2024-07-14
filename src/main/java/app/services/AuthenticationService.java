@@ -1,12 +1,15 @@
 package app.services;
 
+import app.dto.OperationResult;
+import app.dto.UserDto;
+
 /**
  * AuthenticationService
  */
 public interface AuthenticationService {
     /**
      * main authentication method
-     * @return user's login
+     * @return status
      */
-    String auth();
+    OperationResult auth(UserDto userDto);
 }

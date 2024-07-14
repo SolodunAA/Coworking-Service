@@ -2,324 +2,175 @@ package app.services.implementation;
 
 import app.dao.BookingDao;
 import app.dao.PlaceDao;
-import app.dto.Booking;
-import app.in.Reader;
-import app.out.ConsolePrinter;
+import app.dto.BookingDto;
+import app.dto.OperationResult;
 import app.services.UserOperations;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class UserOperationsImpl implements UserOperations {
     private final PlaceDao placeDao;
     private final BookingDao bookingDao;
-    private final Reader reader;
     private final LocalTime openTime;
     private final LocalTime closeTime;
 
-    public UserOperationsImpl(PlaceDao placeDao, BookingDao bookingDao, Reader reader, LocalTime openTime, LocalTime closeTime) {
+    public UserOperationsImpl(PlaceDao placeDao, BookingDao bookingDao, LocalTime openTime, LocalTime closeTime) {
         this.placeDao = placeDao;
         this.bookingDao = bookingDao;
-        this.reader = reader;
         this.openTime = openTime;
         this.closeTime = closeTime;
     }
 
     @Override
-    public void bookDesk(String login) {
-        ConsolePrinter.print("What day would you like to book your desk for? Date format YYYY-MM-DD");
-        LocalDate userAnswerDate = LocalDate.parse(reader.read());
+    public OperationResult bookDesk(BookingDto bookingDto) {
+        if ((bookingDto.getStartTime().isBefore(openTime)
+                || bookingDto.getStartTime().equals(openTime))
+                || bookingDto.getStartTime().isAfter(closeTime)) {
+            return new OperationResult("The booking start time does not coincide with working hours", 400);
+        }
 
-        printAvailableDeskSlots(userAnswerDate);
+        if (bookingDto.getEndTime().isBefore(openTime)
+                || (bookingDto.getEndTime().isAfter(closeTime)
+                || bookingDto.getEndTime().equals(closeTime))) {
+            return new OperationResult("The booking end time does not coincide with working hours", 400);
+        }
 
-        ConsolePrinter.print("Enter start time of your booking. Example format: 09:00. Remember that working hours " + openTime + " - " + closeTime);
-        LocalTime userAnswerStartTime = LocalTime.parse(reader.read());
-        if ((userAnswerStartTime.isBefore(openTime) || userAnswerStartTime.equals(openTime)) && userAnswerStartTime.isAfter(closeTime)) {
-            ConsolePrinter.print("The start time should be between working hours");
-            return;
+        if (!placeDao.isPlaceExists(bookingDto.getPlaceName())) {
+            return new OperationResult("This room doesn't exist", 404);
         }
-        ConsolePrinter.print("Enter end time of your booking. Example format: 15:00");
-        LocalTime userAnswerEndTime = LocalTime.parse(reader.read());
-        if (userAnswerEndTime.isBefore(openTime) && (userAnswerEndTime.isAfter(closeTime) || userAnswerEndTime.equals(closeTime))) {
-            ConsolePrinter.print("The end time should be between working hours");
-            return;
-        }
-        ConsolePrinter.print("Select room");
-        String userAnswerRoomName = reader.read();
-        if (!placeDao.isPlaceExists(userAnswerRoomName)) {
-            ConsolePrinter.print("There is not room with this name");
-            return;
-        }
-        ConsolePrinter.print("Select desk №");
-        int userAnswerDeskNumber = Integer.parseInt(reader.read());
-        if (!placeDao.isDeskExistsInRoom(userAnswerRoomName, userAnswerDeskNumber)) {
-            ConsolePrinter.print("There is not desk with this number in the room");
-            return;
+
+        if (!placeDao.isDeskExistsInRoom(bookingDto.getPlaceName(), bookingDto.getDeskNumber())) {
+            return new OperationResult("This desk doesn't exist", 404);
         }
         Set<LocalTime> availableSlotsForDesk = bookingDao.
-                getAvailableRoomDesksSlotsOnDate(userAnswerDate, userAnswerRoomName).get(userAnswerDeskNumber);
+                getAvailableRoomDesksSlotsOnDate(bookingDto.getDate(), bookingDto.getPlaceName()).get(bookingDto.getDeskNumber());
 
-        LocalTime currentTime = userAnswerStartTime;
-        while (currentTime.isBefore(userAnswerEndTime)) {
+        LocalTime currentTime = bookingDto.getStartTime();
+        while (currentTime.isBefore(bookingDto.getEndTime())) {
             if (!availableSlotsForDesk.contains(currentTime)) {
-                ConsolePrinter.print("This desk is already booked for time " + currentTime);
-                return;
+                return new OperationResult("Time slot already reserved", 400);
             }
             currentTime = currentTime.plusHours(1);
         }
 
-        String statusBooking = bookingDao.addNewDeskBooking(
-                login,
-                userAnswerRoomName,
-                userAnswerDeskNumber,
-                userAnswerDate,
-                userAnswerStartTime,
-                userAnswerEndTime);
-        ConsolePrinter.print(statusBooking);
+        return new OperationResult(bookingDao.addNewDeskBooking(bookingDto), 200);
     }
 
     @Override
-    public void bookHall(String login) {
-        ConsolePrinter.print("What day would you like to book your hall for? Date format YYYY-MM-DD");
-        LocalDate userAnswerDate = LocalDate.parse(reader.read());
-        printAvailableHallSlots(userAnswerDate);
-        ConsolePrinter.print("Enter start time of your booking. Example format: 09:00. Remember that working hours " + openTime + " - " + closeTime);
-        LocalTime userAnswerStartTime = LocalTime.parse(reader.read());
-        if ((userAnswerStartTime.isBefore(openTime) || userAnswerStartTime.equals(openTime)) && userAnswerStartTime.isAfter(closeTime)) {
-            ConsolePrinter.print("The start time should be between working hours");
-            return;
+    public OperationResult bookHall(BookingDto bookingDto) {
+        if ((bookingDto.getStartTime().isBefore(openTime)
+                || bookingDto.getStartTime().equals(openTime))
+                || bookingDto.getStartTime().isAfter(closeTime)) {
+            return new OperationResult("The booking start time does not coincide with working hours", 400);
         }
-        ConsolePrinter.print("Enter end time of your booking. Example format: 15:00");
-        LocalTime userAnswerEndTime = LocalTime.parse(reader.read());
-        if (userAnswerEndTime.isBefore(openTime) && (userAnswerEndTime.isAfter(closeTime) || userAnswerEndTime.equals(closeTime))) {
-            ConsolePrinter.print("The end time should be between working hours");
-            return;
+
+        if (bookingDto.getEndTime().isBefore(openTime)
+                || (bookingDto.getEndTime().isAfter(closeTime)
+                || bookingDto.getEndTime().equals(closeTime))) {
+            return new OperationResult("The booking end time does not coincide with working hours", 400);
         }
-        ConsolePrinter.print("Select hall");
-        String userAnswerHallName = reader.read();
-        if (!placeDao.isPlaceExists(userAnswerHallName)) {
-            ConsolePrinter.print("There is not hall with this name");
-            return;
+        if (!placeDao.isPlaceExists(bookingDto.getPlaceName())) {
+            return new OperationResult("This hall doesn't exist", 404);
         }
 
         Set<LocalTime> availableSlotsForHall = bookingDao.
-                getAvailableHallsSlotsOnDate(userAnswerDate).get(userAnswerHallName);
+                getAvailableHallsSlotsOnDate(bookingDto.getDate()).get(bookingDto.getPlaceName());
 
-        LocalTime currentTime = userAnswerStartTime;
-        while (currentTime.isBefore(userAnswerEndTime)) {
+        LocalTime currentTime = bookingDto.getStartTime();
+        while (currentTime.isBefore(bookingDto.getEndTime())) {
             if (!availableSlotsForHall.contains(currentTime)) {
-                ConsolePrinter.print("This hall is already booked for time " + currentTime);
-                return;
+                return new OperationResult("Time slot already reserved", 400);
             }
             currentTime = currentTime.plusHours(1);
         }
 
-        String statusBooking = bookingDao.addNewHallBooking(
-                login,
-                userAnswerHallName,
-                userAnswerDate,
-                userAnswerStartTime,
-                userAnswerEndTime);
-        ConsolePrinter.print(statusBooking);
+        return new OperationResult(bookingDao.addNewHallBooking(bookingDto), 200);
     }
 
 
     @Override
-    public void deleteBookings(String login) {
-        ConsolePrinter.print("Your bookings:");
-        getAllUserBooking(login);
-        ConsolePrinter.print("Please select the booking ID you want to delete");
-        int userAnswerBookingId = Integer.parseInt(reader.read());
-        ConsolePrinter.print(bookingDao.deleteBooking(userAnswerBookingId));
+    public OperationResult deleteBookings(String login, int bookingId) {
+        if (!bookingDao.isUserHaveBookingWithId(login, bookingId)) {
+            return new OperationResult("This booking doesn't exist", 404);
+        }
+        return new OperationResult(bookingDao.deleteBooking(bookingId), 200);
     }
 
-    @Override
-    public void changeBooking(String login) {
 
-        ConsolePrinter.print("Your bookings:");
-        getAllUserBooking(login);
-        ConsolePrinter.print("You can change date or time of your bookings");
-        ConsolePrinter.print("Please select the booking ID you want to change");
-        int userAnswerBookingId = Integer.parseInt(reader.read());
-        Booking booking = bookingDao.getBookingById(userAnswerBookingId);
-        ConsolePrinter.print("Enter 1 if you want change the date and time");
-        ConsolePrinter.print("Enter 2 if you want change the time");
-        String userAnswerDateOrTime = reader.read();
+    @Override
+    public OperationResult changeBookingDateAndTime(int bookingId, LocalDate date, LocalTime startTime, LocalTime endTime) {
+        BookingDto bookingDto = bookingDao.getBookingById(bookingId);
         String placeType;
-        if (placeDao.getAllRooms().contains(booking.getPlaceName())) {
+        if (placeDao.getAllRooms().contains(bookingDto.getPlaceName())) {
             placeType = "room";
         } else {
             placeType = "hall";
         }
-        switch (userAnswerDateOrTime) {
-            case ("1") -> {
-                ConsolePrinter.print("What day would you like move your booking? Date format YYYY-MM-DD");
-                LocalDate userAnswerDate = LocalDate.parse(reader.read());
-
-                printAvailableDeskSlots(userAnswerDate);
-
-                ConsolePrinter.print("Enter new start time of your booking. Example format: 09:00. Remember that working hours " + openTime + " - " + closeTime);
-                LocalTime userAnswerStartTime = LocalTime.parse(reader.read());
-                if ((userAnswerStartTime.isBefore(openTime) || userAnswerStartTime.equals(openTime)) && userAnswerStartTime.isAfter(closeTime)) {
-                    ConsolePrinter.print("The start time should be between working hours");
-                    return;
-                }
-                ConsolePrinter.print("Enter new end time of your booking. Example format: 15:00");
-                LocalTime userAnswerEndTime = LocalTime.parse(reader.read());
-                if (userAnswerEndTime.isBefore(openTime) && (userAnswerEndTime.isAfter(closeTime) || userAnswerEndTime.equals(closeTime))) {
-                    ConsolePrinter.print("The end time should be between working hours");
-                    return;
-                }
-                if (placeType.equals("room")) {
-                    Set<LocalTime> availableSlotsForDesk = bookingDao.
-                            getAvailableRoomDesksSlotsOnDate(userAnswerDate, booking.getPlaceName()).get(booking.getDeskNumber());
-
-                    LocalTime currentTime = userAnswerStartTime;
-                    while (currentTime.isBefore(userAnswerEndTime)) {
-                        if (!availableSlotsForDesk.contains(currentTime)) {
-                            ConsolePrinter.print("This desk is already booked for time " + currentTime);
-                            return;
-                        }
-                        currentTime = currentTime.plusHours(1);
-                    }
-
-                } else {
-                    Set<LocalTime> availableSlotsForHall = bookingDao.
-                            getAvailableHallsSlotsOnDate(userAnswerDate).get(booking.getPlaceName());
-
-                    LocalTime currentTime = userAnswerStartTime;
-                    while (currentTime.isBefore(userAnswerEndTime)) {
-                        if (!availableSlotsForHall.contains(currentTime)) {
-                            ConsolePrinter.print("This hall is already booked for time " + currentTime);
-                            return;
-                        }
-                        currentTime = currentTime.plusHours(1);
-                    }
-
-                }
-                ConsolePrinter.print(bookingDao.changeBookingDate(userAnswerBookingId, userAnswerDate, userAnswerStartTime, userAnswerEndTime));
-            }
-            case ("2") -> {
-                ConsolePrinter.print("For this date available this slots: ");
-                printAvailableAllSlots(booking.getDate());
-                ConsolePrinter.print("Enter new start time of your booking. Example format: 09:00. Remember that working hours " + openTime + " - " + closeTime);
-                LocalTime userAnswerStartTime = LocalTime.parse(reader.read());
-                if ((userAnswerStartTime.isBefore(openTime) || userAnswerStartTime.equals(openTime)) && userAnswerStartTime.isAfter(closeTime)) {
-                    ConsolePrinter.print("The start time should be between working hours");
-                    return;
-                }
-                ConsolePrinter.print("Enter new end time of your booking. Example format: 15:00");
-                LocalTime userAnswerEndTime = LocalTime.parse(reader.read());
-                if (userAnswerEndTime.isBefore(openTime) && (userAnswerEndTime.isAfter(closeTime) || userAnswerEndTime.equals(closeTime))) {
-                    ConsolePrinter.print("The end time should be between working hours");
-                    return;
-                }
-                if (placeType.equals("room")) {
-                    Set<LocalTime> availableSlotsForDesk = bookingDao
-                            .getAvailableRoomDesksSlotsOnDate(booking.getDate(), booking.getPlaceName())
-                            .get(booking.getDeskNumber());
-
-                    LocalTime currentTime = userAnswerStartTime;
-                    while (currentTime.isBefore(userAnswerEndTime)) {
-                        if (!availableSlotsForDesk.contains(currentTime)) {
-                            ConsolePrinter.print("This desk is already booked for time " + currentTime);
-                            return;
-                        }
-                        currentTime = currentTime.plusHours(1);
-                    }
-
-                } else {
-                    Set<LocalTime> availableSlotsForHall = bookingDao
-                            .getAvailableHallsSlotsOnDate(booking.getDate())
-                            .get(booking.getPlaceName());
-
-                    LocalTime currentTime = userAnswerStartTime;
-                    while (currentTime.isBefore(userAnswerEndTime)) {
-                        if (!availableSlotsForHall.contains(currentTime)) {
-                            ConsolePrinter.print("This hall is already booked for time " + currentTime);
-                            return;
-                        }
-                        currentTime = currentTime.plusHours(1);
-                    }
-
-                }
-                ConsolePrinter.print(bookingDao.changeBookingTime(userAnswerBookingId, userAnswerStartTime, userAnswerEndTime));
-            }
-            default -> ConsolePrinter.print("Wrong enter. Try again.");
+        if ((startTime.isBefore(openTime) || startTime.equals(openTime)) || startTime.isAfter(closeTime)) {
+            return new OperationResult("The booking start time does not coincide with working hours", 400);
         }
+
+        if (endTime.isBefore(openTime) || (endTime.isAfter(closeTime) || endTime.equals(closeTime))) {
+            return new OperationResult("The booking end time does not coincide with working hours", 400);
+        }
+        if (placeType.equals("room")) {
+            Set<LocalTime> availableSlotsForDesk = bookingDao.
+                    getAvailableRoomDesksSlotsOnDate(date, bookingDto.getPlaceName()).get(bookingDto.getDeskNumber());
+
+            LocalTime currentTime = startTime;
+            while (currentTime.isBefore(endTime)) {
+                if (!availableSlotsForDesk.contains(currentTime)) {
+                    return new OperationResult("Time slot already reserved", 400);
+                }
+                currentTime = currentTime.plusHours(1);
+            }
+
+        } else {
+            Set<LocalTime> availableSlotsForHall = bookingDao.
+                    getAvailableHallsSlotsOnDate(date).get(bookingDto.getPlaceName());
+
+            LocalTime currentTime = startTime;
+            while (currentTime.isBefore(endTime)) {
+                if (!availableSlotsForHall.contains(currentTime)) {
+                    return new OperationResult("Time slot already reserved", 400);
+                }
+                currentTime = currentTime.plusHours(1);
+            }
+
+        }
+        return new OperationResult(bookingDao.changeBookingDateAndTime(bookingId, date, startTime, endTime), 200);
+    }
+
+
+    @Override
+    public List<BookingDto> getAllUserBooking(String login) {
+        return bookingDao.getAllBookingsForUser(login);
     }
 
     @Override
-    public void getAllUserBooking(String login) {
-        ConsolePrinter.print("User " + login + " bookings:");
-        List<Booking> userBookings = bookingDao.getAllBookingsForUser(login).stream()
-                .sorted(Comparator.comparing(Booking::getDate))
-                .collect(Collectors.toList());
-        for (Booking booking : userBookings) {
-            ConsolePrinter.print(
-                    "Booking Id: " + booking.getBookingID() +
-                            " Date: " + booking.getDate() +
-                            " Start time: " + booking.getStartTime() +
-                            " End time: " + booking.getEndTime() +
-                            " Place name: " + booking.getPlaceName() +
-                            " Desk number: " + booking.getDeskNumber()
-            );
-        }
-    }
-
-    @Override
-    public void getAllPlaces() {
-        ConsolePrinter.print("There are following halls: ");
-        Set<String> allHalls = placeDao.getAllHalls();
-        for (String hall : allHalls) {
-            ConsolePrinter.print(hall);
-        }
-
-        ConsolePrinter.print("There are following rooms and desks: ");
+    public Map<String, Set<Integer>> getAllRoomsAndDesks() {
         Set<String> allRooms = placeDao.getAllRooms();
+        Map<String, Set<Integer>> roomsAndDesks = new HashMap<>();
         for (String room : allRooms) {
-            ConsolePrinter.print(room + " room:");
-            Set<Integer> allDesksInRoom = placeDao.getSetOfAllDesksInRoom(room);
-            for (int desk : allDesksInRoom) {
-                ConsolePrinter.print("Desk №" + desk);
-            }
+            roomsAndDesks.put(room, placeDao.getSetOfAllDesksInRoom(room));
         }
+        return roomsAndDesks;
     }
 
     @Override
-    public void getAllAvailableSlotsOnDate() {
-        ConsolePrinter.print("What day would you like to check available slots for? Date format YYYY-MM-DD");
-        LocalDate userAnswerDate = LocalDate.parse(reader.read());
-        printAvailableAllSlots(userAnswerDate);
+    public Set<String> getAllHalls() {
+        return placeDao.getAllHalls();
     }
 
-    private void printAvailableHallSlots(LocalDate date) {
-        ConsolePrinter.print("The following hall slots are available for this date:");
-        Set<String> allHalls = placeDao.getAllHalls();
-        Map<String, Set<LocalTime>> availableHallSlots = bookingDao.getAvailableHallsSlotsOnDate(date);
-        for (String hallName : allHalls) {
-            ConsolePrinter.print(hallName + ":");
-            ConsolePrinter.print("available slots: " + availableHallSlots.get(hallName).stream().sorted().collect(Collectors.toList()));
-        }
+    @Override
+    public Map<Integer, Set<LocalTime>> getAllAvailableDeskInRoomSlotsOnDate(LocalDate date, String roomName) {
+        return bookingDao.getAvailableRoomDesksSlotsOnDate(date, roomName);
     }
 
-    private void printAvailableDeskSlots(LocalDate date) {
-        ConsolePrinter.print("The following desks slots are available for this date:");
-        Set<String> allRooms = placeDao.getAllRooms();
-        for (String roomName : allRooms) {
-            Map<Integer, Set<LocalTime>> availableDeskSlots = bookingDao.getAvailableRoomDesksSlotsOnDate(date, roomName);
-            Set<Integer> desksInRoom = placeDao.getSetOfAllDesksInRoom(roomName);
-            ConsolePrinter.print(roomName + " room:");
-            for (Integer desk : desksInRoom) {
-                ConsolePrinter.print("Desk №" + desk + ": available slots: " + availableDeskSlots.get(desk).stream().sorted().collect(Collectors.toList()));
-            }
-        }
-    }
-
-    private void printAvailableAllSlots(LocalDate date) {
-        printAvailableHallSlots(date);
-        printAvailableDeskSlots(date);
+    @Override
+    public Map<String, Set<LocalTime>> getAllAvailableHallSlotsOnDate(LocalDate date) {
+        return bookingDao.getAvailableHallsSlotsOnDate(date);
     }
 }

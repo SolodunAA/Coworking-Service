@@ -7,8 +7,7 @@ import liquibase.database.Database;
 import liquibase.database.DatabaseFactory;
 import liquibase.database.jvm.JdbcConnection;
 import liquibase.resource.ClassLoaderResourceAccessor;
-import org.junit.*;
-import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.*;
 import org.testcontainers.containers.PostgreSQLContainer;
 
 import java.sql.Connection;
@@ -24,7 +23,7 @@ public class PostgresLoginDaoTest {
 
     private final LoginDao loginDao = new PostgresLoginDao(postgres.getJdbcUrl(), postgres.getUsername(), postgres.getPassword());
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeAll() {
         postgres.start();
         runMigrations();
@@ -45,12 +44,12 @@ public class PostgresLoginDaoTest {
         }
     }
 
-    @AfterClass
+    @AfterAll
     public static void afterAll() {
         postgres.stop();
     }
 
-    @Before
+    @AfterEach
     public void clearDb() {
         try (Connection connection = DriverManager.getConnection(postgres.getJdbcUrl(), postgres.getUsername(), postgres.getPassword())) {
             var st = connection.createStatement();

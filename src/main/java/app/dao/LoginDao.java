@@ -1,8 +1,6 @@
 package app.dao;
 
-import app.dto.Role;
-
-import java.util.Set;
+import app.dto.RoleDto;
 
 /**
  * storing user's logins and passwords
@@ -37,6 +35,6 @@ public interface LoginDao {
      *
      * @param login user login
      */
-    Role getUserRole(String login);
+    RoleDto getUserRole(String login);
 
 }

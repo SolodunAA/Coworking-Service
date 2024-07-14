@@ -1,29 +1,24 @@
 package app.factory;
 
 import app.auxiliaryfunctions.PasswordEncoder;
-import app.in.Reader;
 import app.services.*;
 import app.services.implementation.*;
 
 import java.time.LocalTime;
 
 public class ServicesFactory {
-    private final AdminOfficeService adminOfficeService;
+    private final DaoFactory daoFactory;
     private final AuthenticationService authenticationService;
     private final RegistrationService registrationService;
-    private final UserOfficeService userOfficeService;
+    private final UserOperations userOperations;
+    private final AdminOperations adminOperations;
 
-    public ServicesFactory(DaoFactory daoFactory, Reader reader, PasswordEncoder passwordEncoder, LocalTime openTime, LocalTime closeTime) {
-        this.authenticationService = new AuthenticationServiceImpl(daoFactory.getLoginDao(), passwordEncoder, reader);
-        this.registrationService = new RegistrationServiceImpl(passwordEncoder, daoFactory.getLoginDao(), reader);
-        UserOperations userOperations = new UserOperationsImpl(daoFactory.getPlaceDao(), daoFactory.getBookingDao(), reader, openTime, closeTime);
-        AdminOperations adminOperations = new AdminOperationsImpl(daoFactory.getPlaceDao(), daoFactory.getBookingDao(), reader, userOperations);
-        this.userOfficeService = new UserOfficeServiceImpl(reader, userOperations);
-        this.adminOfficeService = new AdminOfficeServiceImpl(reader, adminOperations);
-    }
-
-    public AdminOfficeService getAdminOfficeService() {
-        return adminOfficeService;
+    public ServicesFactory(DaoFactory daoFactory, PasswordEncoder passwordEncoder, LocalTime openTime, LocalTime closeTime) {
+        this.daoFactory = daoFactory;
+        this.authenticationService = new AuthenticationServiceImpl(daoFactory.getLoginDao(), passwordEncoder);
+        this.registrationService = new RegistrationServiceImpl(passwordEncoder, daoFactory.getLoginDao());
+        this.userOperations = new UserOperationsImpl(daoFactory.getPlaceDao(), daoFactory.getBookingDao(), openTime, closeTime);
+        this.adminOperations = new AdminOperationsImpl(daoFactory.getPlaceDao(), daoFactory.getBookingDao());
     }
 
     public AuthenticationService getAuthenticationService() {
@@ -33,9 +28,17 @@ public class ServicesFactory {
     public RegistrationService getRegistrationService() {
         return registrationService;
     }
-
-    public UserOfficeService getUserOfficeService() {
-        return userOfficeService;
+    public UserOperations getUserOperations() {
+        return userOperations;
     }
+    public AdminOperations getAdminOperations() {
+        return adminOperations;
+    }
+    public DaoFactory getDaoFactory() {
+        return daoFactory;
+    }
+
+
+
 
 }
