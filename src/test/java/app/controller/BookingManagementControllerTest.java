@@ -3,8 +3,7 @@ package app.controller;
 import app.dao.LoginDao;
 import app.dto.BookingDto;
 import app.dto.OperationResult;
-import app.dto.UserDto;
-import app.dto.request.UserRequest;
+import app.dto.request.HallBookRequest;
 import app.mapper.BookingMapper;
 import app.mapper.BookingMapperImpl;
 import app.services.UserOperations;
@@ -29,7 +28,6 @@ import java.util.List;
 import java.util.Set;
 
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -43,12 +41,14 @@ public class BookingManagementControllerTest {
     private LoginDao loginDao;
     @Spy
     private BookingMapper bookingMapper = new BookingMapperImpl();
+
     @Before
     public void setup() {
         MockitoAnnotations.openMocks(this);
         BookingManagementController bookingManagementController = new BookingManagementController(userOperations, bookingMapper, loginDao);
         mockMvc = MockMvcBuilders.standaloneSetup(bookingManagementController).build();
     }
+
     @Test
     public void getMyBookingsTest() throws Exception {
         String login = "user";
@@ -61,14 +61,16 @@ public class BookingManagementControllerTest {
         bookings.add(bookingDto);
         objectMapper.registerModule(new JSR310Module());
 
-        when(userOperations.getAllUserBooking(login)).thenReturn(bookings);
         when(loginDao.checkIfUserExist(login)).thenReturn(true);
+        when(userOperations.getAllUserBooking(login)).thenReturn(bookings);
         String bookingToJson = objectMapper.writeValueAsString(bookings);
 
         mockMvc.perform(MockMvcRequestBuilders.get("/booking/mybookings")
-                        .contentType(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .sessionAttr("login", login))
                 .andExpect(status().isOk())
                 .andExpect(content().json(bookingToJson));
         verify(userOperations, times(1)).getAllUserBooking(login);
     }
+
 }

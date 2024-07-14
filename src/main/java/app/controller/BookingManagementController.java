@@ -46,9 +46,12 @@ public class BookingManagementController {
     @PostMapping(value = "/bookHall", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Object> bookHall(HttpSession session, @RequestBody HallBookRequest hallBookRequest) {
         String login = (String) session.getAttribute("login");
-        BookingDto bookingDto = bookingMapper.hallBookRequestToDto(hallBookRequest, login);
-        OperationResult operationResult = userOperations.bookHall(bookingDto);
-        return ResponseEntity.status(operationResult.getErrCode()).body(operationResult.getMessage());
+        if(loginDao.checkIfUserExist(login)) {
+            BookingDto bookingDto = bookingMapper.hallBookRequestToDto(hallBookRequest, login);
+            OperationResult operationResult = userOperations.bookHall(bookingDto);
+            return ResponseEntity.status(operationResult.getErrCode()).body(operationResult.getMessage());
+        }
+        return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
     }
 
     @PostMapping(value = "/bookDesk", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)

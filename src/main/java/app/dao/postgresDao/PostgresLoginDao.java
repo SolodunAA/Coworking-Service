@@ -39,7 +39,7 @@ public class PostgresLoginDao implements LoginDao {
                 PreparedStatement ps = connection.prepareStatement(SQLParams.IS_USER_EXISTS)
         ) {
             ps.setString(1, login);
-            try (var resultSet = ps.executeQuery()) {
+            try (ResultSet resultSet = ps.executeQuery()) {
                 resultSet.next();
                 return resultSet.getBoolean(1);
             }

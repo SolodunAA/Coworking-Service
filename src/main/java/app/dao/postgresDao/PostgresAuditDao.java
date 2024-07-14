@@ -49,9 +49,10 @@ public class PostgresAuditDao implements AuditDao {
         int size = 0;
         try (Connection connection = DriverManager.getConnection(url, userName, password);
              PreparedStatement ps = connection.prepareStatement(SQLParams.AUDIT_TABLE_SIZE)){
-            ResultSet resultSet = ps.executeQuery();
-            while (resultSet.next()) {
-                size = resultSet.getInt(1);
+            try(ResultSet resultSet = ps.executeQuery()) {
+                while (resultSet.next()) {
+                    size = resultSet.getInt(1);
+                }
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -65,15 +66,15 @@ public class PostgresAuditDao implements AuditDao {
         try (Connection connection = DriverManager.getConnection(url, userName, password);
              PreparedStatement ps = connection.prepareStatement(SQLParams.GET_AUDIT_RECORDS_SQL)) {
             ps.setInt(1, limit);
-            ResultSet resultSet = ps.executeQuery();
-            while (resultSet.next()) {
-                String login = resultSet.getString("login");
-                long timestamp = resultSet.getLong("time");
-                String action = resultSet.getString("action");
-                AuditItem auditItem = new AuditItem(login, timestamp, action);
-                list.add(auditItem);
+            try(ResultSet resultSet = ps.executeQuery();){
+                while (resultSet.next()) {
+                    String login = resultSet.getString("login");
+                    long timestamp = resultSet.getLong("time");
+                    String action = resultSet.getString("action");
+                    AuditItem auditItem = new AuditItem(login, timestamp, action);
+                    list.add(auditItem);
+                }
             }
-
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
