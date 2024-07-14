@@ -38,11 +38,16 @@ public class BookingManagementController {
      * @return status and all bookings
      */
     @GetMapping(value = "/mybookings", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<BookingDto>> getMyBookings(HttpSession session) {
+    public ResponseEntity<List<BookingResponse>> getMyBookings(HttpSession session) {
         String login = (String) session.getAttribute("login");
         if(loginDao.checkIfUserExist(login)){
             List<BookingDto> allBookings = userOperations.getAllUserBooking(login);
-            return ResponseEntity.ok(allBookings);
+            List<BookingResponse> allBookingsResponse = new ArrayList<>();
+            for(BookingDto bookingDto: allBookings){
+                allBookingsResponse.add(bookingMapper.bookingDtoToBookingResponse(bookingDto));
+            }
+
+            return ResponseEntity.ok(allBookingsResponse);
         }
 
         return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
@@ -59,7 +64,8 @@ public class BookingManagementController {
     public ResponseEntity<Object> bookHall(HttpSession session, @RequestBody HallBookRequest hallBookRequest) {
         String login = (String) session.getAttribute("login");
         if(loginDao.checkIfUserExist(login)) {
-            BookingDto bookingDto = bookingMapper.hallBookRequestToDto(hallBookRequest, login);
+            BookingDto bookingDto = bookingMapper.hallBookRequestToDto(hallBookRequest);
+            bookingDto.setUserLogin(login);
             OperationResult operationResult = userOperations.bookHall(bookingDto);
             return ResponseEntity.status(operationResult.getErrCode()).body(operationResult.getMessage());
         }
@@ -76,7 +82,8 @@ public class BookingManagementController {
     @PostMapping(value = "/bookDesk", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Object> bookDesk(HttpSession session, @RequestBody HallBookRequest hallBookRequest) {
         String login = (String) session.getAttribute("login");
-        BookingDto bookingDto = bookingMapper.hallBookRequestToDto(hallBookRequest, login);
+        BookingDto bookingDto = bookingMapper.hallBookRequestToDto(hallBookRequest);
+        bookingDto.setUserLogin(login);
         OperationResult operationResult = userOperations.bookHall(bookingDto);
         return ResponseEntity.status(operationResult.getErrCode()).body(operationResult.getMessage());
     }
@@ -129,7 +136,8 @@ public class BookingManagementController {
     @DeleteMapping(value = "/delete", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Object> deleteBooking(HttpSession session, @RequestBody BookingDeleteRequest bookingDeleteRequest) {
         String login = (String) session.getAttribute("login");
-        BookingDeleteDto bookingDeleteDto = bookingMapper.bookingDeleteRequestToDto(bookingDeleteRequest, login);
+        BookingDeleteDto bookingDeleteDto = bookingMapper.bookingDeleteRequestToDto(bookingDeleteRequest);
+        bookingDeleteDto.setLogin(login);
         OperationResult operationResult = userOperations.deleteBookings(bookingDeleteDto.getLogin(), bookingDeleteDto.getBookingId());
         return ResponseEntity.status(operationResult.getErrCode()).body(operationResult.getMessage());
     }
