@@ -28,6 +28,11 @@ public class RegistrationController {
         this.registrationService = registrationService;
     }
 
+    /**
+     * user registration
+     * @param userRequest json with username and password
+     * @return massage and status
+     */
     @PostMapping(value = "/registration", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Object> registration(@RequestBody UserRequest userRequest) {
         UserDto userDto = userMapper.requestToDto(userRequest);

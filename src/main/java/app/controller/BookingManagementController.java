@@ -32,6 +32,11 @@ public class BookingManagementController {
         this.loginDao = loginDao;
     }
 
+    /**
+     * view all user bookings
+     * @param session
+     * @return status and all bookings
+     */
     @GetMapping(value = "/mybookings", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<BookingDto>> getMyBookings(HttpSession session) {
         String login = (String) session.getAttribute("login");
@@ -42,6 +47,13 @@ public class BookingManagementController {
 
         return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
     }
+
+    /**
+     * book hall
+     * @param session
+     * @param hallBookRequest jasom with hall namde date and time
+     * @return status and massage
+     */
 
     @PostMapping(value = "/bookHall", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Object> bookHall(HttpSession session, @RequestBody HallBookRequest hallBookRequest) {
@@ -54,6 +66,13 @@ public class BookingManagementController {
         return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
     }
 
+    /**
+     * book desk
+     * @param session
+     * @param hallBookRequest json with room, desk number, date and time
+     * @return status and message
+     */
+
     @PostMapping(value = "/bookDesk", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Object> bookDesk(HttpSession session, @RequestBody HallBookRequest hallBookRequest) {
         String login = (String) session.getAttribute("login");
@@ -61,6 +80,13 @@ public class BookingManagementController {
         OperationResult operationResult = userOperations.bookHall(bookingDto);
         return ResponseEntity.status(operationResult.getErrCode()).body(operationResult.getMessage());
     }
+
+    /**
+     * view all available slots for hall
+     * @param session
+     * @param hallAvailableRequest json with date
+     * @return status and slots
+     */
 
     @GetMapping(value = "/availableHall", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Object> availableHall(HttpSession session, @RequestBody HallAvailableRequest hallAvailableRequest) {
@@ -72,6 +98,13 @@ public class BookingManagementController {
             return ResponseEntity.status(500).body("Internal Server Error");
         }
     }
+
+    /**
+     * view all available desk slots
+     * @param session
+     * @param deskAvailableRequest json with date
+     * @return status and slots
+     */
 
     @GetMapping(value = "/availableDeskInRoom", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Object> availableDeskInRoom(HttpSession session, @RequestBody DeskAvailableRequest deskAvailableRequest) {
@@ -86,6 +119,13 @@ public class BookingManagementController {
         }
     }
 
+    /**
+     * delete booking
+     * @param session
+     * @param bookingDeleteRequest json with id booking
+     * @return status and message
+     */
+
     @DeleteMapping(value = "/delete", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Object> deleteBooking(HttpSession session, @RequestBody BookingDeleteRequest bookingDeleteRequest) {
         String login = (String) session.getAttribute("login");
@@ -93,6 +133,13 @@ public class BookingManagementController {
         OperationResult operationResult = userOperations.deleteBookings(bookingDeleteDto.getLogin(), bookingDeleteDto.getBookingId());
         return ResponseEntity.status(operationResult.getErrCode()).body(operationResult.getMessage());
     }
+
+    /**
+     * change booking
+     * @param session
+     * @param bookingChangeRequest
+     * @return status and message
+     */
 
     @PutMapping(value = "/change", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Object> changeBooking(HttpSession session, @RequestBody BookingChangeRequest bookingChangeRequest) {

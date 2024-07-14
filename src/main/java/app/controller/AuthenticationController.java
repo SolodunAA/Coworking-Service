@@ -27,6 +27,13 @@ public class AuthenticationController {
         this.authenticationService = authenticationService;
     }
 
+    /**
+     * user authentication
+     * @param session
+     * @param userRequest json with username and password
+     * @return massage and status
+     */
+
     @PostMapping(value = "/authentication", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Object> authentication(HttpSession session, @RequestBody UserRequest userRequest) {
         UserDto userDto = userMapper.requestToDto(userRequest);
