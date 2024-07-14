@@ -2,6 +2,7 @@ package app.controller;
 
 import app.dao.LoginDao;
 import app.dto.BookingDto;
+import app.dto.BookingResponse;
 import app.dto.OperationResult;
 import app.dto.request.HallBookRequest;
 import app.mapper.BookingMapper;
@@ -57,9 +58,13 @@ public class BookingManagementControllerTest {
         LocalDate date = LocalDate.parse("2024-01-01");
         LocalTime startTime = LocalTime.parse("09:00:00");
         LocalTime endTime = LocalTime.parse("15:00:00");
-        BookingDto bookingDto = new BookingDto(1, login, hallName, 0, date, startTime, endTime);
-        bookings.add(bookingDto);
+        BookingResponse bookingResponse = new BookingResponse(1, hallName, 0, date, startTime, endTime);
+
         objectMapper.registerModule(new JSR310Module());
+        BookingDto bookingDto = new BookingDto(1, login, hallName, 0, date, startTime, endTime);
+        List<BookingDto> bookingsDto = new ArrayList<>();
+        bookingsDto.add(bookingDto);
+        bookings.add(bookingDto);
 
         when(loginDao.checkIfUserExist(login)).thenReturn(true);
         when(userOperations.getAllUserBooking(login)).thenReturn(bookings);

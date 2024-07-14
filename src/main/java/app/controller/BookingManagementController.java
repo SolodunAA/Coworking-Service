@@ -38,16 +38,11 @@ public class BookingManagementController {
      * @return status and all bookings
      */
     @GetMapping(value = "/mybookings", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<BookingResponse>> getMyBookings(HttpSession session) {
+    public ResponseEntity<List<BookingDto>> getMyBookings(HttpSession session) {
         String login = (String) session.getAttribute("login");
         if(loginDao.checkIfUserExist(login)){
             List<BookingDto> allBookings = userOperations.getAllUserBooking(login);
-            List<BookingResponse> allBookingsResponse = new ArrayList<>();
-            for(BookingDto bookingDto: allBookings){
-                allBookingsResponse.add(bookingMapper.bookingDtoToBookingResponse(bookingDto));
-            }
-
-            return ResponseEntity.ok(allBookingsResponse);
+            return ResponseEntity.ok(allBookings);
         }
 
         return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
@@ -82,10 +77,13 @@ public class BookingManagementController {
     @PostMapping(value = "/bookDesk", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Object> bookDesk(HttpSession session, @RequestBody HallBookRequest hallBookRequest) {
         String login = (String) session.getAttribute("login");
-        BookingDto bookingDto = bookingMapper.hallBookRequestToDto(hallBookRequest);
-        bookingDto.setUserLogin(login);
-        OperationResult operationResult = userOperations.bookHall(bookingDto);
-        return ResponseEntity.status(operationResult.getErrCode()).body(operationResult.getMessage());
+        if(loginDao.checkIfUserExist(login)) {
+            BookingDto bookingDto = bookingMapper.hallBookRequestToDto(hallBookRequest);
+            bookingDto.setUserLogin(login);
+            OperationResult operationResult = userOperations.bookHall(bookingDto);
+            return ResponseEntity.status(operationResult.getErrCode()).body(operationResult.getMessage());
+        }
+        return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
     }
 
     /**

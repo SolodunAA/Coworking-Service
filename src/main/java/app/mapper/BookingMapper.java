@@ -23,11 +23,4 @@ public interface BookingMapper {
 
     @Mapping(source = "bookingId", target = "bookingId")
     BookingDeleteDto bookingDeleteRequestToDto(BookingDeleteRequest bookingDeleteRequest);
-    @Mapping(source = "placeName", target = "placeName")
-    @Mapping(source = "date", target = "date")
-    @Mapping(source = "startTime", target = "startTime")
-    @Mapping(source = "endTime", target = "endTime")
-    @Mapping(source = "bookingId", target = "bookingId")
-    @Mapping(source = "deskNumber", target = "deskNumber")
-    BookingResponse bookingDtoToBookingResponse(BookingDto bookingDto);
 }
