@@ -1,12 +1,11 @@
 package app.dao.postgresDao;
 
+import app.config.YmlReader;
 import app.dao.LoginDao;
 import app.dto.RoleDto;
+import org.springframework.beans.factory.annotation.Autowired;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
+import java.sql.*;
 
 
 public class PostgresLoginDao implements LoginDao {
@@ -14,19 +13,36 @@ public class PostgresLoginDao implements LoginDao {
     private final String userName;
     private final String password;
 
+    @Autowired
+    public PostgresLoginDao(YmlReader ymlReader) {
+        this.url = ymlReader.getUrl();
+        this.userName = ymlReader.getUsername();
+        this.password = ymlReader.getPassword();
+    }
+
+    /**
+     * constructor for testing
+     * @param url
+     * @param userName
+     * @param password
+     */
     public PostgresLoginDao(String url, String userName, String password) {
         this.url = url;
         this.userName = userName;
         this.password = password;
     }
+
     @Override
     public boolean checkIfUserExist(String login) {
-        try (Connection connection = DriverManager.getConnection(url, userName, password);
-             PreparedStatement ps = connection.prepareStatement(SQLParams.IS_USER_EXISTS)) {
+        try (
+                Connection connection = DriverManager.getConnection(url, userName, password);
+                PreparedStatement ps = connection.prepareStatement(SQLParams.IS_USER_EXISTS)
+        ) {
             ps.setString(1, login);
-            ResultSet resultSet = ps.executeQuery();
-            resultSet.next();
-            return resultSet.getBoolean(1);
+            try (ResultSet resultSet = ps.executeQuery()) {
+                resultSet.next();
+                return resultSet.getBoolean(1);
+            }
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -53,10 +69,10 @@ public class PostgresLoginDao implements LoginDao {
         try (Connection connection = DriverManager.getConnection(url, userName, password);
              PreparedStatement ps = connection.prepareStatement(SQLParams.SELECT_ENCODED_PASSWORD)) {
             ps.setString(1, login);
-            ResultSet resultSet = ps.executeQuery();
-            resultSet.next();
-            return resultSet.getInt("password_encoded");
-
+            try (ResultSet resultSet = ps.executeQuery()) {
+                resultSet.next();
+                return resultSet.getInt("password_encoded");
+            }
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -67,16 +83,16 @@ public class PostgresLoginDao implements LoginDao {
         try (Connection connection = DriverManager.getConnection(url, userName, password);
              PreparedStatement ps = connection.prepareStatement(SQLParams.SELECT_USER_ROLE)) {
             ps.setString(1, login);
-            ResultSet resultSet = ps.executeQuery();
-            resultSet.next();
-            String role = resultSet.getString("role");
-            if(role.equals("admin")){
-                role = "ADMIN";
-            } else {
-                role = "USER";
+            try (ResultSet resultSet = ps.executeQuery()) {
+                resultSet.next();
+                String role = resultSet.getString("role");
+                if (role.equals("admin")) {
+                    role = "ADMIN";
+                } else {
+                    role = "USER";
+                }
+                return RoleDto.valueOf(role);
             }
-            return RoleDto.valueOf(role);
-
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

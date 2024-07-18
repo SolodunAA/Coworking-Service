@@ -1,9 +1,8 @@
-package app.dto;
-
+package app.dto.request;
 
 import java.util.Objects;
 
-public class UserDto {
+public class UserRequest {
     private String login;
     private String password;
 
@@ -27,8 +26,8 @@ public class UserDto {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        UserDto userDto = (UserDto) o;
-        return Objects.equals(login, userDto.login) && Objects.equals(password, userDto.password);
+        UserRequest that = (UserRequest) o;
+        return Objects.equals(login, that.login) && Objects.equals(password, that.password);
     }
 
     @Override

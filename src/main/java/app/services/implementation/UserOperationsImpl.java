@@ -1,26 +1,32 @@
 package app.services.implementation;
 
+import app.annotation.Loggable;
+import app.config.YmlReader;
 import app.dao.BookingDao;
 import app.dao.PlaceDao;
 import app.dto.BookingDto;
 import app.dto.OperationResult;
 import app.services.UserOperations;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.*;
 
+@Loggable
+@Service
 public class UserOperationsImpl implements UserOperations {
     private final PlaceDao placeDao;
     private final BookingDao bookingDao;
     private final LocalTime openTime;
     private final LocalTime closeTime;
-
-    public UserOperationsImpl(PlaceDao placeDao, BookingDao bookingDao, LocalTime openTime, LocalTime closeTime) {
+    @Autowired
+    public UserOperationsImpl(PlaceDao placeDao, BookingDao bookingDao, YmlReader ymlReader) {
         this.placeDao = placeDao;
         this.bookingDao = bookingDao;
-        this.openTime = openTime;
-        this.closeTime = closeTime;
+        this.openTime = LocalTime.parse(ymlReader.getOpenTime());
+        this.closeTime = LocalTime.parse(ymlReader.getCloseTime());
     }
 
     @Override

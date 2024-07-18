@@ -1,35 +1,26 @@
 package app.mapper;
 
-import app.dto.ReqBookingDeskDto;
-import app.dto.BookingDto;
-import app.dto.ReqBookingHallDto;
-import app.dto.RespBookingDto;
+import app.dto.*;
+import app.dto.request.BookingDeleteRequest;
+import app.dto.request.HallBookRequest;
+import app.dto.request.RoomBookRequest;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.factory.Mappers;
 
-@Mapper
+@Mapper(componentModel = "spring")
 public interface BookingMapper {
-    BookingMapper INSTANCE = Mappers.getMapper(BookingMapper.class);
+    @Mapping(source = "hallName", target = "placeName")
+    @Mapping(source = "date", target = "date")
+    @Mapping(source = "startTime", target = "startTime")
+    @Mapping(source = "endTime", target = "endTime")
+    BookingDto hallBookRequestToDto(HallBookRequest hallBookRequest);
 
-    ReqBookingHallDto bookingDtoToBookingHallDto(BookingDto bookingDto);
-    BookingDto bookingHallDtoToBookingDto(ReqBookingHallDto reqBookingHallDto);
+    @Mapping(source = "roomName", target = "placeName")
+    @Mapping(source = "date", target = "date")
+    @Mapping(source = "startTime", target = "startTime")
+    @Mapping(source = "endTime", target = "endTime")
+    BookingDto roomBookRequestToDto(RoomBookRequest roomBookRequest);
 
-    default BookingDto addLoginAndDeskToBookingHallDTO(ReqBookingHallDto reqBookingHallDto, String login) {
-        BookingDto bookingDto = bookingHallDtoToBookingDto(reqBookingHallDto);
-        bookingDto.setUserLogin(login);
-        bookingDto.setDeskNumber(0);
-        return bookingDto;
-    }
-    ReqBookingDeskDto bookingDtoToBookingDeskDto(BookingDto bookingDto);
-
-    BookingDto bookingDeskDtoToBookingDto(ReqBookingDeskDto reqBookingDeskDto);
-
-    default BookingDto addLoginToBookingDeskDTO(ReqBookingDeskDto reqBookingDeskDto, String login) {
-        BookingDto bookingDto = bookingDeskDtoToBookingDto(reqBookingDeskDto);
-        bookingDto.setUserLogin(login);
-        return bookingDto;
-    }
-
-    RespBookingDto bookingDtoToRespBookingDto(BookingDto bookingDto);
+    @Mapping(source = "bookingId", target = "bookingId")
+    BookingDeleteDto bookingDeleteRequestToDto(BookingDeleteRequest bookingDeleteRequest);
 }

@@ -1,6 +1,5 @@
 package app.dao;
 
-
 import app.dao.postgresDao.PostgresLoginDao;
 import liquibase.Liquibase;
 import liquibase.database.Database;

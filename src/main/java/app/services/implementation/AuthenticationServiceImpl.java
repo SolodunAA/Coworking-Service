@@ -5,12 +5,15 @@ import app.dao.LoginDao;
 import app.dto.OperationResult;
 import app.dto.UserDto;
 import app.services.AuthenticationService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+@Service
 public class AuthenticationServiceImpl implements AuthenticationService {
     private final LoginDao loginDao;
     private final PasswordEncoder passwordEncoder;
 
-
+    @Autowired
     public AuthenticationServiceImpl(LoginDao loginDao,
                                      PasswordEncoder passwordEncoder) {
         this.loginDao = loginDao;

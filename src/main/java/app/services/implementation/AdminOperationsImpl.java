@@ -1,16 +1,23 @@
 package app.services.implementation;
 
+import app.annotation.Auditable;
+import app.annotation.Loggable;
 import app.dao.BookingDao;
 import app.dao.PlaceDao;
 import app.dto.BookingDto;
 import app.dto.OperationResult;
 import app.services.AdminOperations;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import java.util.List;
 
+@Loggable
+@Service
 public class AdminOperationsImpl implements AdminOperations {
     private final PlaceDao placeDao;
     private final BookingDao bookingDao;
-
+    @Autowired
     public AdminOperationsImpl(PlaceDao placeDao, BookingDao bookingDao) {
         this.placeDao = placeDao;
         this.bookingDao = bookingDao;
